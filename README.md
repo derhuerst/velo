@@ -35,21 +35,21 @@
 
 ### 1. Get *velo*
 
-If you want to customize the **latest (unstable) version**, clone a copy of this git repo.
+If you want to customize the **latest (unstable) version**, clone a copy of this git repo and change into the directory.
 
 ```bash
 $ git clone https://github.com/derhuerst/velo.git
+$ cd velo
 ```
 
-If you want to customize a **stable release** instead, [grab the latest release](https://github.com/derhuerst/velo/releases) and unpack it.
+If you want to customize a **stable release** instead, [grab the latest release](https://github.com/derhuerst/velo/releases), unpack it and change into the directory using `cd path/to/velo`.
 
 
 ### 2. Dependencies
 
-Change into the directory and install the development dependencies.
+Install the development dependencies.
 
 ```bash
-$ cd path/to/velo
 $ npm install
 ```
 
