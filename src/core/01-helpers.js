@@ -1,4 +1,5 @@
 // core/helpers
+// `helpers` contains a collection of useful functions.
 
 
 
@@ -11,6 +12,7 @@ var noop = function () {};
 
 
 
+// A reference to `hasOwnProperty`.
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 var hasProp = {}.hasOwnProperty;
 

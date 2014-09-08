@@ -1,4 +1,5 @@
 // shapes/Shape
+// `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
 
 
 
@@ -15,7 +16,7 @@ inherit(Shape, Node);
 
 
 
-// todo
+// Create a new `Shape` based on `options`.
 function Shape (options) {
 	Node.call(options);    // call the super class constructor
 

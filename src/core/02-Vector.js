@@ -1,4 +1,5 @@
 // core/Vector
+// `Vector` represents a 2D vector. It is used as a position or translation.
 
 
 
@@ -10,7 +11,7 @@ exports.v = function (x, y) {
 
 
 
-// `Vector` represents a 2D vector. It is used as a position or translation.
+// Create a new Vector by `x` and `y`.
 function Vector (x, y){
 	this.x = x;    // The x property, which can be changed without hassle.
 	this.y = y;    // The y property, which can be changed without hassle.
@@ -23,7 +24,7 @@ Vector.prototype = {
 
 
 
-	// Change the `x` and `y` values relatively. Either another `Vector` object or raw values can be passed.
+	// Change the `x` and `y` values relatively. Either one `Vector` object or two values can be passed.
 	add: function (x, y) {
 		if (y !== null) {    // Two arguments has been passed, using them as raw values.
 			this.x += x;
@@ -38,7 +39,7 @@ Vector.prototype = {
 
 
 
-	// Apply a rotation to the `x` and `y` values.
+	// Apply a rotation of `angle` to the `x` and `y` values.
 	rotate: function (angle) {
 		this.x = Math.cos(angle) * x;
 		this.y = Math.sin(angle) * y;
@@ -48,7 +49,7 @@ Vector.prototype = {
 
 
 
-	// Check if the x and y values of this object are equal to given ones. Either another `Vector` object or raw values can be passed.
+	// Check if the `x` and `y` values of this vector are equal to given ones. Either one `Vector` object or two values can be passed.
 	equals: function (x, y) {
 		if (y !== null)    // Two arguments has been passed, using them as raw values.
 			return this.x === x.x && this.y === x.y;
@@ -57,7 +58,7 @@ Vector.prototype = {
 
 
 
-	// Return a new `Vector` with the same values. The return `Vector` then `equals` to this one.
+	// Return a new `Vector` object with the same values. The returned vector then `equals` to this one.
 	clone: function () {
 		return exports.v(this.x, this.y);    // shorthand for `new Vector(…)`
 	}
