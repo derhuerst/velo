@@ -31,6 +31,7 @@
 		"gulp-debug":			"^1.0.1",
 		"gulp-buffer":			"^0.0.2",
 		"gulp-concat":			"^2.3.5",
+		"gulp-gzip":			"^0.0.8",
 		"gulp-header":			"^1.0.5",
 		"gulp-rename":			"^1.2.0",
 		"gulp-rimraf":			"^0.1.0",

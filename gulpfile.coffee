@@ -14,6 +14,8 @@ source		= require 'vinyl-source-stream'
 streamify	= require 'gulp-streamify'
 uglify		= require 'gulp-uglify'
 
+gzip		= require 'gulp-gzip'
+
 rimraf		= require 'gulp-rimraf'
 
 
@@ -78,6 +80,17 @@ gulp.task 'minify', ['build'], () ->
 
 
 
+gulp.task 'gzip', ['minify'], () ->
+	return gulp.src "./dist/#{pkg.name}.min.js"
+	.pipe gzip
+		gzipOptions:
+			level: 9    # highest compression
+	.pipe rename "#{pkg.name}.min.js"
+	.pipe gulp.dest './dist'
+
+
+
+
 gulp.task 'cleanup', ['build'], () ->
 	return gulp.src "./src/#{pkg.name}.js", read:false
 	.pipe rimraf()
@@ -86,6 +99,6 @@ gulp.task 'cleanup', ['build'], () ->
 
 
 gulp.task 'default', ['concat', 'build', 'minify', 'cleanup'], () ->
-	gulp.src ["./dist/#{pkg.name}.js", "./dist/#{pkg.name}.min.js"]
+	gulp.src ["./dist/*"]
 	.pipe size
 		showFiles: true
