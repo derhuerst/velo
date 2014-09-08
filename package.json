@@ -1,0 +1,54 @@
+{
+	"name": "velo",
+	"description": "velo is a modern and lightweight canvas 2D library.",
+	"version": "0.1.0",
+	"main": "dist/velo.js",
+	"keywords": [
+		"velo",
+		"canvas",
+		"2d",
+		"library",
+		"lib",
+		"scene graph",
+		"lightweight",
+		"javascript"
+	],
+	"author": {
+		"name": "Jannis R",
+		"email": "mail@jannisr.de",
+		"url": "http://jannisr.de"
+	},
+	"homepage": "https://github.com/derhuerst/velo",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/derhuerst/velo.git"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"coffee-script":		"^1.8.0",
+		"browserify":			"^5.11.0",
+		"gulp":					"^3.8.7",
+		"gulp-debug":			"^1.0.1",
+		"gulp-buffer":			"^0.0.2",
+		"gulp-concat":			"^2.3.5",
+		"gulp-header":			"^1.0.5",
+		"gulp-rename":			"^1.2.0",
+		"gulp-rimraf":			"^0.1.0",
+		"gulp-size":			"^1.1.0",
+		"gulp-streamify":		"^0.0.5",
+		"gulp-uglify":			"^1.0.1",
+		"gulp-util":			"^3.0.1",
+		"vinyl-source-stream":	"^0.1.1"
+	},
+	"scripts": {
+		"dist": "gulp"
+	},
+	"config": {
+		"files": [
+			"core/*",
+			"util/*",
+			"shapes/*",
+			"convenience/*"
+		]
+	}
+}

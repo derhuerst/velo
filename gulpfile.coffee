@@ -1,0 +1,91 @@
+path		= require 'path'
+gulp		= require 'gulp'
+gutil		= require 'gulp-util'
+fs			= require 'fs'
+
+concat		= require 'gulp-concat'
+buffer		= require 'gulp-buffer'
+header		= require 'gulp-header'
+size		= require 'gulp-size'
+rename		= require 'gulp-rename'
+browserify	= require 'browserify'
+source		= require 'vinyl-source-stream'
+
+streamify	= require 'gulp-streamify'
+uglify		= require 'gulp-uglify'
+
+rimraf		= require 'gulp-rimraf'
+
+
+# package metadata
+pkg = require './package.json'
+cfg = pkg.config
+
+
+
+
+gulp.task 'concat', () ->
+	glob = []
+	for file in cfg.files or ['01-core/*', '02-shapes/*', '02-util/*']
+		gutil.log 'using', gutil.colors.green(file)
+		glob.push path.join 'src', "#{file}.js"
+	for file in cfg.ignore or []
+		gutil.log 'ignoring', gutil.colors.red(file)
+		glob.push '!' + path.join 'src', "#{file}.js"
+
+	return gulp.src glob
+	.pipe concat "#{pkg.name}.js", newLine: '\n\n'
+	.pipe gulp.dest './src'
+
+
+
+
+gulp.task 'build', ['concat'], () ->
+	return browserify
+		entries: "./src/#{pkg.name}.js"
+		standalone: pkg.name
+		noparse: true
+		hasExports: false
+	.bundle()
+	.pipe source "#{pkg.name}.js"
+	.pipe buffer()
+	.pipe header '// ' + [
+		pkg.name
+		pkg.author.name,
+		"v#{pkg.version}",
+		pkg.homepage
+	].join(' | ') + '\n\n\n\n\n\n'
+	.pipe gulp.dest './dist'
+
+
+
+
+gulp.task 'minify', ['build'], () ->
+	return gulp.src "./dist/#{pkg.name}.js"
+	.pipe streamify uglify
+		compress:
+			unsafe: true
+			pure_getters: true
+	.pipe rename "#{pkg.name}.min.js"
+	.pipe buffer()
+	.pipe header '// ' + [
+		pkg.name
+		pkg.author.name,
+		"v#{pkg.version}"
+	].join(' | ') + '\n\n'
+	.pipe gulp.dest './dist'
+
+
+
+
+gulp.task 'cleanup', ['build'], () ->
+	return gulp.src "./src/#{pkg.name}.js", read:false
+	.pipe rimraf()
+
+
+
+
+gulp.task 'default', ['concat', 'build', 'minify', 'cleanup'], () ->
+	gulp.src ["./dist/#{pkg.name}.js", "./dist/#{pkg.name}.min.js"]
+	.pipe size
+		showFiles: true

@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "velo",
+			"folder_exclude_patterns": [
+				"src",
+				"dist",
+				"demo",
+				"node_modules"
+			],
+			"file_exclude_patterns": [
+				"*.sublime-workspace"
+			]
+		},
+		{
+			"path": "./src",
+			"name": "src"
+		},
+		{
+			"path": "./dist",
+			"name": "dist"
+		}
+	],
+	"settings": {
+		"tab_size": 4,
+		"translate_tabs_to_spaces": false
+	}
+}

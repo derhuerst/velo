@@ -1,0 +1,22 @@
+{
+	"name": "velo",
+	"version": "0.1.0",
+	"main": "dist/velo.min.js",
+	"license": "MIT",
+	"ignore": [
+		"package.json",
+		".editorconfig",
+		".DS_Store",
+		"gulpfile.coffee"
+	],
+	"keywords": [
+		"velo",
+		"canvas",
+		"2d",
+		"library",
+		"lib",
+		"scene graph",
+		"lightweight",
+		"javascript"
+	]
+}
