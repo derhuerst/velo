@@ -6,6 +6,7 @@
 
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.velo=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // core/helpers
+// `helpers` contains a collection of useful functions.
 
 
 
@@ -18,6 +19,7 @@ var noop = function () {};
 
 
 
+// A reference to `hasOwnProperty`.
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
 var hasProp = {}.hasOwnProperty;
 
@@ -54,21 +56,22 @@ var extend = function (target, source) {
 };
 
 // core/Vector
+// `Vector` represents a 2D vector. It is used as a position or translation.
 
 
 
 // Export the `Vector` "class" and a shorthand.
 exports.Vector = Vector;
 exports.v = function (x, y) {
-	return new Canvas(x, y);
+	return new Vector(x, y);
 };
 
 
 
-// `Vector` represents a 2D vector. It is used as a position or translation.
+// Create a new Vector by `x` and `y`.
 function Vector (x, y){
-	this.x = x;    // The x property, which can be changed without hassle.
-	this.y = y;    // The y property, which can be changed without hassle.
+	this.x = x || 0;    // The x property, which can be changed without hassle.
+	this.y = y || 0;    // The y property, which can be changed without hassle.
 }
 
 
@@ -78,9 +81,9 @@ Vector.prototype = {
 
 
 
-	// Change the `x` and `y` values relatively. Either another `Vector` object or raw values can be passed.
+	// Change the `x` and `y` values relatively. Either one `Vector` object or two values can be passed.
 	add: function (x, y) {
-		if (y !== null) {    // Two arguments has been passed, using them as raw values.
+		if (y !== null) {    // Two arguments have been passed, using them as raw values.
 			this.x += x;
 			this.y += y;
 		} else if (x !== null) {    // Only one argument has been passed, using it as a `Vector` object.
@@ -93,8 +96,8 @@ Vector.prototype = {
 
 
 
-	// Apply a rotation to the `x` and `y` values.
-	rotate: function (angle) {
+	// Apply a rotation of `angle` to the `x` and `y` values.
+	rotate: function (angle) {    // todo: length
 		this.x = Math.cos(angle) * x;
 		this.y = Math.sin(angle) * y;
 
@@ -103,7 +106,7 @@ Vector.prototype = {
 
 
 
-	// Check if the x and y values of this object are equal to given ones. Either another `Vector` object or raw values can be passed.
+	// Check if the `x` and `y` values of this vector are equal to given ones. Either one `Vector` object or two values can be passed.
 	equals: function (x, y) {
 		if (y !== null)    // Two arguments has been passed, using them as raw values.
 			return this.x === x.x && this.y === x.y;
@@ -112,7 +115,7 @@ Vector.prototype = {
 
 
 
-	// Return a new `Vector` with the same values. The return `Vector` then `equals` to this one.
+	// Return a new `Vector` object with the same values. The returned vector then `equals` to this one.
 	clone: function () {
 		return exports.v(this.x, this.y);    // shorthand for `new Vector(…)`
 	}
@@ -122,6 +125,7 @@ Vector.prototype = {
 };
 
 // core/List
+// `List` is a native Array with a few comfort methods. It is used for lists of child nodes or vertices.
 
 
 
@@ -138,7 +142,7 @@ inherit(List, Array);
 
 
 
-// `List` is a native Array with a few comfort methods. It is used for lists of child nodes or vertices.
+// Create a new `List` of the given `items`.
 function List (items) {
 	Array.call(this, items);    // call the super class constructor
 }
@@ -150,32 +154,32 @@ extend(List.prototype, {
 
 
 
-	// Add `item` to the `List` if it isn't alerady stored.
+	// Add `item` to the list if it isn't alerady stored.
 	add: function (item) {
 		if (this.indexOf(item) < 0)
 			this.push(item);
 	},
 
 
-	// Remove `item` from the `List`.
+	// Remove `item` from the list.
 	remove: function (item, i) {    // Short declaration of `i` in the arguments list.
 		if (i = items.indexOf(item) >= 0)
 			items.splice(i, item);
 	},
 
 
-	// Return wether `item` exists in the `List`.
+	// Return wether `item` exists in the list.
 	has: function (item) {
 		return this._items.indexOf(item) >= 0;
 	},
 
 
 
-	// Call a method by name with all further arguments on every item in the list.
-	call: function (methodName) {
-		arguments.shift();    // Remove `methodName` from `arguments`.
+	// Call `method` by name with all further arguments on every item in the list.
+	call: function () {
+		new Array(arguments);    // Convert to real `Array`.
 		for (var i = 0, length = this.length; i < length; i++) {
-			this[i][methodName].apply(this[i], arguments);
+			this[i][arguments.shift()].apply(this[i], arguments);
 		}
 	}
 
@@ -184,6 +188,8 @@ extend(List.prototype, {
 });
 
 // core/Node
+// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store child nodes in `children`.
+// *velo* works with a tree of nodes, each of which has a position and a rotation relative to its parent node. Whenever the user changes a node's `parent`, (relative) position or (relative) `rotation`, `_update` recomputes the (absolute) position and rotation. `Shape` objects inheriting from `Node` can then draw onto the untranslated and unrotated canvas using `_absolute`. This way, rendering will be fast, because the transformations do not have to be recomputed on each render cycle.
 
 
 
@@ -195,8 +201,7 @@ exports.n = function (options) {
 
 
 
-// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store child nodes in `children`.
-// velo works with a tree of nodes, each of which has a position and a rotation relative to its parent node. Whenever the user changes a node's `parent`, (relative) position or (relative) `rotation`, `_update` recomputes the (absolute) position and rotation. `Shape` objects inheriting from `Node` can then draw onto the untranslated and unrotated canvas using `_absolute`. This way, rendering will be fast, because the transformations do not have to be recomputed on each render cycle.
+// Create a new `Node` based on `parent`, `position`, `rotation` and `children`.
 function Node (options) {
 	options = options || {};
 
@@ -219,8 +224,7 @@ extend(Node.prototype, {
 
 
 
-	// With no arguments, get the node's parent node.
-	// Otherwise, set the node's parent to `node` and recompute the the absolute translation.
+	// With no arguments, get the node's parent node. Otherwise, set the node's parent to `Node` and recompute the the absolute translation.
 	parent: function (node) {
 		if (arguments.length === 0)    // no parent node given
 			return this._parent    // work as getter
@@ -233,22 +237,8 @@ extend(Node.prototype, {
 	},
 
 
-	// With no arguments, get the node's rotation.
-	// Otherwise, set the rotation to `angle` and recompute the the absolute translation.
-	rotation: function (angle) {
-		if (arguments.length === 0)    // no angle node given
-			return this._rotation    // work as getter
-
-		// angle given, work as setter
-		this._rotation = angle;
-
-		this._update();    // Recompute the the absolute translation.
-	},
-
-
 	// With no arguments, get the node's position. Otherwise change the position and recompute the the absolute translation.
-	// If `relative` is `true`, translate position by `vector`.
-	// Otherwise, set the position to `vector`.
+	// If `relative` is `true`, translate position by `vector`. Otherwise, set the position to `vector`.
 	position: function (vector, relative) {
 		if (arguments.length === 0)    // no vector given
 			return this._rotation;    // work as getter
@@ -263,9 +253,21 @@ extend(Node.prototype, {
 	},
 
 
+	// With no arguments, get the node's rotation. Otherwise, set the rotation to `angle` and recompute the the absolute translation.
+	rotation: function (angle) {
+		if (arguments.length === 0)    // no angle node given
+			return this._rotation    // work as getter
+
+		// angle given, work as setter
+		this._rotation = angle;
+
+		this._update();    // Recompute the the absolute translation.
+	},
+
+
 
 	// Recompute the absolute translations in `_absolute` and `_update` all children.
-	// Remember: This node's rotation doesn't affect its rotation, but its drawing and children.
+	// Note: This node's rotation doesn't affect its rotation, but its drawing and children.
 	_update: function () {
 		var thus = this, parent = thus._parent;    // aliases for shorter code
 
@@ -283,9 +285,9 @@ extend(Node.prototype, {
 
 
 	// Helper function to compute a node's absolute position based on
-	// - this node's (relative) position
-	// - the parent node's (absolute) position
-	// - the parent node's (absolute) rotation
+	// - this node's (relative) position,
+	// - the parent node's (absolute) position,
+	// - the parent node's (absolute) rotation.
 	_absolute: function (position, parentAbsolutePosition, parentAbsoluteRotation) {
 		return position.clone()    // Take this node's relative position, clone it,
 		.rotate(parentAbsoluteRotation)    // apply the parent node's (absolute) rotation
@@ -297,6 +299,7 @@ extend(Node.prototype, {
 });
 
 // core/Canvas
+// `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
 
 
 
@@ -313,16 +316,16 @@ inherit(Canvas, Node);
 
 
 
-// `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
+// Create a new `Canvas` object using `element`.
 function Canvas (element) {
-	Node.call();    // call the super class constructor
+	Node.call(this);    // call the super class constructor
 
 	// A user might want to access the `_root` property, no matter if (s)he is dealing with the root node (a `Canvas` object).
 	this._root = this;
 
-	// Store a reference to the canvas DOM node (`HTMLCanvasElement`).
+	// The canvas DOM node (`HTMLCanvasElement`).
 	this.element = element;
-	// Store the rendering context (`RenderingContext2d`).
+	// The rendering context (`RenderingContext2d`).
 	this.context = element.getContext('2d');
 }
 
@@ -341,8 +344,7 @@ extend(Canvas.prototype, {
 	},
 
 
-	// Clear the canvas draw to it.
-	// Since the `Canvas` object itself doesn't have to be drawn, this method just draws all it's children.
+	// Clear the canvas and draw all children draw to it.
 	draw: function () {
 		this.clear();
 		this.children.call('draw');
@@ -353,6 +355,7 @@ extend(Canvas.prototype, {
 });
 
 // shapes/Shape
+// `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
 
 
 
@@ -369,7 +372,7 @@ inherit(Shape, Node);
 
 
 
-// todo
+// Create a new `Shape` based on `options`.
 function Shape (options) {
 	Node.call(options);    // call the super class constructor
 
@@ -407,7 +410,7 @@ exports.ri = function (callback) {
 
 
 function RenderingInterval (callback) {
-	this.callback = callback || __noop;
+	this.callback = callback || noop;
 	this.stop();
 }
 
@@ -433,7 +436,7 @@ RenderingInterval.prototype = {
 
 
 	_call: function () {
-		if(!this.runnning)
+		if(!this.running)
 			return;
 		this.callback();
 		this._queue();
@@ -441,7 +444,7 @@ RenderingInterval.prototype = {
 
 
 	_queue: function () {
-		requestAnimationFrame(this._call);
+		requestAnimationFrame(this._call.bind(this));
 	}
 
 
@@ -459,20 +462,21 @@ exports.i = function (callback, interval) {
 
 
 
+// Let `Interval` inherit from `RenderingInterval`.
+inherit(Interval, RenderingInterval);
+
+
+
 function Interval (callback, interval) {
-	Rendering.call(this, callback);
+	RenderingInterval.call(this, callback);
 
 	this.interval = interval;
 }
 
 
 
-__extends(Interval, Rendering);
-
-
-
 Interval.prototype._queue = function () {
-	setTimeout(this._call, this.interval);
+	setTimeout(this._call.bind(this), this.interval);
 };
 
 // shapes/Point
@@ -772,7 +776,7 @@ Circle.prototype.draw = function () {
 	Shape.draw.call(thus);
 	context.beginPath();
 
-	context.arc(0, 0, thus.radius / 2|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+	context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 	// Finish drawing.
 	context.closePath();
