@@ -9,18 +9,19 @@ exports.i = function (callback, interval) {
 
 
 
+// Let `Interval` inherit from `RenderingInterval`.
+inherit(Interval, RenderingInterval);
+
+
+
 function Interval (callback, interval) {
-	Rendering.call(this, callback);
+	RenderingInterval.call(this, callback);
 
 	this.interval = interval;
 }
 
 
 
-__extends(Interval, Rendering);
-
-
-
 Interval.prototype._queue = function () {
-	setTimeout(this._call, this.interval);
+	setTimeout(this._call.bind(this), this.interval);
 };

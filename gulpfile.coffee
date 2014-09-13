@@ -85,7 +85,6 @@ gulp.task 'gzip', ['minify'], () ->
 	.pipe gzip
 		gzipOptions:
 			level: 9    # highest compression
-	.pipe rename "#{pkg.name}.min.js"
 	.pipe gulp.dest './dist'
 
 
@@ -98,7 +97,7 @@ gulp.task 'cleanup', ['build'], () ->
 
 
 
-gulp.task 'default', ['concat', 'build', 'minify', 'cleanup'], () ->
+gulp.task 'default', ['concat', 'build', 'minify', 'gzip', 'cleanup'], () ->
 	gulp.src ["./dist/*"]
 	.pipe size
 		showFiles: true

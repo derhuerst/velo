@@ -50,10 +50,10 @@ extend(List.prototype, {
 
 
 	// Call `method` by name with all further arguments on every item in the list.
-	call: function (methodName) {
-		arguments.shift();    // Remove `methodName` from `arguments`.
+	call: function () {
+		new Array(arguments);    // Convert to real `Array`.
 		for (var i = 0, length = this.length; i < length; i++) {
-			this[i][methodName].apply(this[i], arguments);
+			this[i][arguments.shift()].apply(this[i], arguments);
 		}
 	}
 

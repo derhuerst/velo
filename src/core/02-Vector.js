@@ -6,15 +6,15 @@
 // Export the `Vector` "class" and a shorthand.
 exports.Vector = Vector;
 exports.v = function (x, y) {
-	return new Canvas(x, y);
+	return new Vector(x, y);
 };
 
 
 
 // Create a new Vector by `x` and `y`.
 function Vector (x, y){
-	this.x = x;    // The x property, which can be changed without hassle.
-	this.y = y;    // The y property, which can be changed without hassle.
+	this.x = x || 0;    // The x property, which can be changed without hassle.
+	this.y = y || 0;    // The y property, which can be changed without hassle.
 }
 
 
@@ -26,7 +26,7 @@ Vector.prototype = {
 
 	// Change the `x` and `y` values relatively. Either one `Vector` object or two values can be passed.
 	add: function (x, y) {
-		if (y !== null) {    // Two arguments has been passed, using them as raw values.
+		if (y !== null) {    // Two arguments have been passed, using them as raw values.
 			this.x += x;
 			this.y += y;
 		} else if (x !== null) {    // Only one argument has been passed, using it as a `Vector` object.
@@ -40,7 +40,7 @@ Vector.prototype = {
 
 
 	// Apply a rotation of `angle` to the `x` and `y` values.
-	rotate: function (angle) {
+	rotate: function (angle) {    // todo: length
 		this.x = Math.cos(angle) * x;
 		this.y = Math.sin(angle) * y;
 

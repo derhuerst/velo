@@ -18,7 +18,7 @@ inherit(Canvas, Node);
 
 // Create a new `Canvas` object using `element`.
 function Canvas (element) {
-	Node.call();    // call the super class constructor
+	Node.call(this);    // call the super class constructor
 
 	// A user might want to access the `_root` property, no matter if (s)he is dealing with the root node (a `Canvas` object).
 	this._root = this;

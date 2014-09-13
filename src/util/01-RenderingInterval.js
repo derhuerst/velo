@@ -10,7 +10,7 @@ exports.ri = function (callback) {
 
 
 function RenderingInterval (callback) {
-	this.callback = callback || __noop;
+	this.callback = callback || noop;
 	this.stop();
 }
 
@@ -36,7 +36,7 @@ RenderingInterval.prototype = {
 
 
 	_call: function () {
-		if(!this.runnning)
+		if(!this.running)
 			return;
 		this.callback();
 		this._queue();
@@ -44,7 +44,7 @@ RenderingInterval.prototype = {
 
 
 	_queue: function () {
-		requestAnimationFrame(this._call);
+		requestAnimationFrame(this._call.bind(this));
 	}
 
 

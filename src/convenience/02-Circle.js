@@ -38,7 +38,7 @@ Circle.prototype.draw = function () {
 	Shape.draw.call(thus);
 	context.beginPath();
 
-	context.arc(0, 0, thus.radius / 2|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+	context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 	// Finish drawing.
 	context.closePath();
