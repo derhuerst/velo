@@ -29,7 +29,8 @@
 |[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`List`](src/core/03-List.js), [`Node`](src/core/04-Node.js), [`Canvas`](src/core/05-Canvas.js), [`Shape`](src/core/06-Shape.js)|
 |[util](src/util)|✔|[`Rendering`](src/util/01-Rendering.js), [`Interval`](src/util/02-Interval.js)|
 |[shapes](src/shapes)|✔|[`Point`](src/shapes/01-Point.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js)|
-|[convenience](src/convenience)|✔|[`Square`](src/convenience/04-Square.js), [`Circle`](src/convenience/06-Circle.js)|
+|[convenience](src/convenience)|✔|[`Square`](src/convenience/01-Square.js), [`Circle`](src/convenience/02-Circle.js)|
+|[colors](src/colors)|x|**unfinished**; [`Color`](src/colors/01-Color.js), [`Hex`](src/colors/02-Hex.js), [`RGB`](src/colors/02-RGB.js), [`RGBA`](src/colors/02-RGBA.js)|
 
 
 
