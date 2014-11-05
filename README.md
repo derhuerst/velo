@@ -103,6 +103,6 @@ If you **have a question**, **found a bug** or want to **propose a feature**, ha
 ## API Documentation
 
 - [core](docs/core.md)
-- [util](docs/core.md)
-- [shapes](docs/core.md)
-- [convenience](docs/core.md)
+- [util](docs/util.md)
+- [shapes](docs/shpaes.md)
+- [convenience](docs/convenience.md)
