@@ -31,7 +31,6 @@
 |[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/04-Node.js), [`Canvas`](src/core/05-Canvas.js), [`Shape`](src/core/06-Shape.js)|
 |[util](src/util)|✔|[`Rendering`](src/util/01-Rendering.js), [`Interval`](src/util/02-Interval.js)|
 |[shapes](src/shapes)|✔|[`Spot`](src/shapes/01-Spot.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js), [`Square`](src/shapes/05-Square.js), [`Circle`](src/shapes/06-Circle.js)|
-|[colors](src/colors)|x|**unfinished**; [`Color`](src/colors/01-Color.js), [`Hex`](src/colors/02-Hex.js), [`RGB`](src/colors/02-RGB.js), [`RGBA`](src/colors/02-RGBA.js)|
 
 
 
@@ -72,8 +71,7 @@ You might want to add plugins or remove stuff you don't need. Specify all module
 		"files": [
 			"core/*",
 			"util/*",
-			"shapes/*",
-			"convenience/*"
+			"shapes/*"
 		]
 	}
 ...
@@ -106,4 +104,3 @@ If you **have a question**, **found a bug** or want to **propose a feature**, ha
 - [core](docs/core.md)
 - [util](docs/util.md)
 - [shapes](docs/shpaes.md)
-- [convenience](docs/convenience.md)
