@@ -17,6 +17,8 @@ inherit(Ellipse, Shape);
 
 // Yeah, a `Ellipse` is a ellipse, drawn around its `position`.
 function Ellipse (options) {
+	options = options || {};
+
 	Shape.call(options);    // call the super class constructor
 
 	// The ellipse's width. Pretty obvious.

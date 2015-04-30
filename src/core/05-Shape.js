@@ -18,6 +18,8 @@ inherit(Shape, Node);
 
 // Create a new `Shape` based on `options`.
 function Shape (options) {
+	options = options || {};
+
 	Node.call(options);    // call the super class constructor
 
 	// The color the shape will be filled with. Can be any valid CSS color.

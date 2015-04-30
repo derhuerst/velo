@@ -17,6 +17,8 @@ inherit(Rectangle, Polygon);
 
 // Yeah, a `Reactangle` is a rectangle.
 function Rectangle (options) {
+	options = options || {};
+
 	Polygon.call(options);    // call the super class constructor
 
 	// The rectangle's width. Pretty obvious.

@@ -25,7 +25,7 @@ function Node (options) {
 	// The list of child nodes.
 	this.children = new Array(options.children);
 
-	this._update();    // Recompute the the absolute translation.
+	Node.prototype._update.call(this);    // Recompute the the absolute translation.
 }
 
 

@@ -82,11 +82,19 @@ exports.array = {
 
 	// Call `method` by name with all following arguments on every item in `array`.
 	foreach: function () {
-		var array = arguments.shift();
-		var method = arguments.shift();
+		var array = arguments[0];
+		var method = arguments[1];
+		arguments = exports.array.slice(2);
 		for (var i = 0, length = array.length; i < length; i++) {
+			if(!array[i])
+				continue;
 			array[i][method].apply(array[i], arguments);
 		}
+	},
+
+	// Works like `Array.prototype.slice`, but additionally requires `array` as an argument.
+	slice: function (array, i, j) {
+		return Array.prototype.slice.call(array, i, j);
 	}
 
 };

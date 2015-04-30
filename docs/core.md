@@ -33,21 +33,25 @@ _This method is only accessible for modules velo has been built with._
 
 Extend the `target` object by the keys and values of the `source` object. [Stolen from the zepto.js project](https://github.com/madrobby/zepto/blob/1d94d92223a5ec2edf1fbe18a7a9cc717e7663e4/src/zepto.js#L223), then customized.
 
-#### *public* `array.add(array, item)`
+#### `array.add(array, item)`
 
 Add `item` to `array if it isn't alerady stored.
 
-#### *public* `list.remove(item)`
+#### `array.remove(item)`
 
 Remove the first entry for `item` from `array`.
 
-#### *public* `list.has(item)`
+#### `array.has(item)`
 
 Return wether `item` exists in `array`.
 
-#### *public* `list.call(method, …)`
+#### `array.foreach(method, …)`
 
 Call `method` by name with all following arguments on every item in `array`.
+
+#### `array.slice(array, …)`
+
+Works like [`Array.prototype.slice`](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/slice), but additionally requires `array` as an argument.
 
 
 

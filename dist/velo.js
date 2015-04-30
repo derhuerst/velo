@@ -89,11 +89,19 @@ exports.array = {
 
 	// Call `method` by name with all following arguments on every item in `array`.
 	foreach: function () {
-		var array = arguments.shift();
-		var method = arguments.shift();
+		var array = arguments[0];
+		var method = arguments[1];
+		arguments = exports.array.slice(2);
 		for (var i = 0, length = array.length; i < length; i++) {
+			if(!array[i])
+				continue;
 			array[i][method].apply(array[i], arguments);
 		}
+	},
+
+	// Works like `Array.prototype.slice`, but additionally requires `array` as an argument.
+	slice: function (array, i, j) {
+		return Array.prototype.slice.call(array, i, j);
 	}
 
 };
@@ -194,7 +202,7 @@ function Node (options) {
 	// The list of child nodes.
 	this.children = new Array(options.children);
 
-	this._update();    // Recompute the the absolute translation.
+	Node.prototype._update.call(this);    // Recompute the the absolute translation.
 }
 
 
@@ -354,6 +362,8 @@ inherit(Shape, Node);
 
 // Create a new `Shape` based on `options`.
 function Shape (options) {
+	options = options || {};
+
 	Node.call(options);    // call the super class constructor
 
 	// The color the shape will be filled with. Can be any valid CSS color.
@@ -583,6 +593,8 @@ inherit(Rectangle, Polygon);
 
 // Yeah, a `Reactangle` is a rectangle.
 function Rectangle (options) {
+	options = options || {};
+
 	Polygon.call(options);    // call the super class constructor
 
 	// The rectangle's width. Pretty obvious.
@@ -632,6 +644,8 @@ inherit(Ellipse, Shape);
 
 // Yeah, a `Ellipse` is a ellipse, drawn around its `position`.
 function Ellipse (options) {
+	options = options || {};
+
 	Shape.call(options);    // call the super class constructor
 
 	// The ellipse's width. Pretty obvious.
