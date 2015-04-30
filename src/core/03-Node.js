@@ -23,7 +23,7 @@ function Node (options) {
 	// The rotation relative to the node's parent in radians.
 	this._rotation = options.rotation || 0;
 	// The list of child nodes.
-	this.children = exports.l(options.children);    // shorthand for `new List(…)`
+	this.children = new Array(options.children);
 
 	this._update();    // Recompute the the absolute translation.
 }
@@ -90,7 +90,7 @@ extend(Node.prototype, {
 			thus._absPosition = thus._position.clone();
 
 		// Call update on all child nodes, because they are affected by changes on this node.
-		thus.children.call('_update');
+		exports.array.foreach(this.children, '_update');
 	},
 
 

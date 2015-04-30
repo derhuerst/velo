@@ -33,6 +33,22 @@ _This method is only accessible for modules velo has been built with._
 
 Extend the `target` object by the keys and values of the `source` object. [Stolen from the zepto.js project](https://github.com/madrobby/zepto/blob/1d94d92223a5ec2edf1fbe18a7a9cc717e7663e4/src/zepto.js#L223), then customized.
 
+#### *public* `array.add(array, item)`
+
+Add `item` to `array if it isn't alerady stored.
+
+#### *public* `list.remove(item)`
+
+Remove the first entry for `item` from `array`.
+
+#### *public* `list.has(item)`
+
+Return wether `item` exists in `array`.
+
+#### *public* `list.call(method, …)`
+
+Call `method` by name with all following arguments on every item in `array`.
+
 
 
 ## [`Vector`](src/core/02-Vector.js)
@@ -82,42 +98,6 @@ Check if the `x` and `y` values of this vector are equal to given ones. Either o
 #### *public* `vector.clone()`
 
 Return a new `Vector` object with the same values. The returned vector then `equals` to this one.
-
-
-
-## [`List`](src/core/03-List.js)
-
-`List` is a native `Array` with a few comfort methods. It is used for lists of child nodes or vertices.
-
-
-### `new velo.List(items)` or `velo.l(items)`
-
-_`List` inherits from **`Array`**._
-
-Create a new `List` of the given `items`.
-
-#### `items`
-
-The items the list will by generated with. _default: `[]`_
-
-
-### Methods
-
-#### *public* `list.add(item)`
-
-Add `item` to the list if it isn't alerady stored.
-
-#### *public* `list.remove(item)`
-
-Remove `item` from the list.
-
-#### *public* `list.has(item)`
-
-Return wether `item` exists in the list.
-
-#### *public* `list.call(method, …)`
-
-Call `method` by name with all further arguments on every item in the list.
 
 
 

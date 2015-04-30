@@ -55,6 +55,49 @@ var extend = function (target, source) {
 	return target
 };
 
+
+
+// Call `method` by name with all further arguments on every item in the list.
+var call = function () {
+	new Array(arguments);    // Convert to real `Array`.
+	for (var i = 0, length = this.length; i < length; i++) {
+		this[i][arguments.shift()].apply(this[i], arguments);
+	}
+}
+
+
+
+// `Array` helpers
+exports.array = {
+
+	// Add `item` to `array if it isn't alerady stored.
+	add: function (array, item) {
+		if (array.indexOf(item) < 0)
+			array.push(item);
+	},
+
+	// Remove the first entry for `item` from `array`.
+	remove: function (array, item, i) {    // Short declaration of `i` in the arguments list.
+		if (i = array.indexOf(item) >= 0)
+			array.splice(i, item);
+	},
+
+	// Return wether `item` exists in `array`.
+	has: function (array, item) {
+		return this._items.indexOf(item) >= 0;
+	},
+
+	// Call `method` by name with all following arguments on every item in `array`.
+	foreach: function () {
+		var array = arguments.shift();
+		var method = arguments.shift();
+		for (var i = 0, length = array.length; i < length; i++) {
+			array[i][method].apply(array[i], arguments);
+		}
+	}
+
+};
+
 // core/Vector
 // `Vector` represents a 2D vector. It is used as a position or translation.
 
@@ -124,69 +167,6 @@ Vector.prototype = {
 
 };
 
-// core/List
-// `List` is a native Array with a few comfort methods. It is used for lists of child nodes or vertices.
-
-
-
-// Export the `List` "class" and a shorthand.
-exports.List = List;
-exports.l = function (items) {
-	return new List(items);
-};
-
-
-
-// Let `List` inherit from `Array`.
-inherit(List, Array);
-
-
-
-// Create a new `List` of the given `items`.
-function List (items) {
-	Array.call(this, items);    // call the super class constructor
-}
-
-
-
-// Add methods to the prototype of `List`.
-extend(List.prototype, {
-
-
-
-	// Add `item` to the list if it isn't alerady stored.
-	add: function (item) {
-		if (this.indexOf(item) < 0)
-			this.push(item);
-	},
-
-
-	// Remove `item` from the list.
-	remove: function (item, i) {    // Short declaration of `i` in the arguments list.
-		if (i = items.indexOf(item) >= 0)
-			items.splice(i, item);
-	},
-
-
-	// Return wether `item` exists in the list.
-	has: function (item) {
-		return this._items.indexOf(item) >= 0;
-	},
-
-
-
-	// Call `method` by name with all further arguments on every item in the list.
-	call: function () {
-		new Array(arguments);    // Convert to real `Array`.
-		for (var i = 0, length = this.length; i < length; i++) {
-			this[i][arguments.shift()].apply(this[i], arguments);
-		}
-	}
-
-
-
-});
-
 // core/Node
 // `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store child nodes in `children`.
 // *velo* works with a tree of nodes, each of which has a position and a rotation relative to its parent node. Whenever the user changes a node's `parent`, (relative) position or (relative) `rotation`, `_update` recomputes the (absolute) position and rotation. `Shape` objects inheriting from `Node` can then draw onto the untranslated and unrotated canvas using `_absolute`. This way, rendering will be fast, because the transformations do not have to be recomputed on each render cycle.
@@ -212,7 +192,7 @@ function Node (options) {
 	// The rotation relative to the node's parent in radians.
 	this._rotation = options.rotation || 0;
 	// The list of child nodes.
-	this.children = exports.l(options.children);    // shorthand for `new List(…)`
+	this.children = new Array(options.children);
 
 	this._update();    // Recompute the the absolute translation.
 }
@@ -279,7 +259,7 @@ extend(Node.prototype, {
 			thus._absPosition = thus._position.clone();
 
 		// Call update on all child nodes, because they are affected by changes on this node.
-		thus.children.call('_update');
+		exports.array.foreach(this.children, '_update');
 	},
 
 
@@ -347,7 +327,7 @@ extend(Canvas.prototype, {
 	// Clear the canvas and draw all children draw to it.
 	draw: function () {
 		this.clear();
-		this.children.call('draw');
+		exports.array.foreach(this.children, 'draw');
 	}
 
 
@@ -551,8 +531,8 @@ function Polygon (options) {
 	Shape.call(options);    // call the super class constructor
 
 	// The list of vertex nodes the polygon exists of.
-	// User might want to access the list of vertex ndoes, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
-	this._vertices = this.vertices = exports.l(options.vertices);
+	// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+	this._vertices = this.vertices = new Array(options.vertices);
 }
 
 

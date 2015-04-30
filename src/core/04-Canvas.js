@@ -47,7 +47,7 @@ extend(Canvas.prototype, {
 	// Clear the canvas and draw all children draw to it.
 	draw: function () {
 		this.clear();
-		this.children.call('draw');
+		exports.array.foreach(this.children, 'draw');
 	}
 
 

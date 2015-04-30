@@ -22,8 +22,8 @@ function Polygon (options) {
 	Shape.call(options);    // call the super class constructor
 
 	// The list of vertex nodes the polygon exists of.
-	// User might want to access the list of vertex ndoes, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
-	this._vertices = this.vertices = exports.l(options.vertices);
+	// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+	this._vertices = this.vertices = new Array(options.vertices);
 }
 
 

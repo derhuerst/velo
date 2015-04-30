@@ -47,3 +47,46 @@ var extend = function (target, source) {
 	}
 	return target
 };
+
+
+
+// Call `method` by name with all further arguments on every item in the list.
+var call = function () {
+	new Array(arguments);    // Convert to real `Array`.
+	for (var i = 0, length = this.length; i < length; i++) {
+		this[i][arguments.shift()].apply(this[i], arguments);
+	}
+}
+
+
+
+// `Array` helpers
+exports.array = {
+
+	// Add `item` to `array if it isn't alerady stored.
+	add: function (array, item) {
+		if (array.indexOf(item) < 0)
+			array.push(item);
+	},
+
+	// Remove the first entry for `item` from `array`.
+	remove: function (array, item, i) {    // Short declaration of `i` in the arguments list.
+		if (i = array.indexOf(item) >= 0)
+			array.splice(i, item);
+	},
+
+	// Return wether `item` exists in `array`.
+	has: function (array, item) {
+		return this._items.indexOf(item) >= 0;
+	},
+
+	// Call `method` by name with all following arguments on every item in `array`.
+	foreach: function () {
+		var array = arguments.shift();
+		var method = arguments.shift();
+		for (var i = 0, length = array.length; i < length; i++) {
+			array[i][method].apply(array[i], arguments);
+		}
+	}
+
+};
