@@ -2,21 +2,17 @@
 
 
 
-exports.RenderingInterval = RenderingInterval;
-exports.ri = function (callback) {
-	return new RenderingInterval(callback);
-};
+// todo: description
+var RenderingInterval = exports.RenderingInterval = {
 
 
 
-function RenderingInterval (callback) {
-	this.callback = callback || noop;
-	this.stop();
-}
+	init: function (callback) {
+		this.callback = callback || noop;
+		this.stop();
 
-
-
-RenderingInterval.prototype = {
+		return this;   // method chaining
+	},
 
 
 
@@ -49,4 +45,12 @@ RenderingInterval.prototype = {
 
 
 
+};
+
+
+
+// Export a shorthand.
+var ri = exports.ri = function (callback) {
+	return inherit(RenderingInterval)
+	.init(callback);
 };

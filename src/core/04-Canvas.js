@@ -1,55 +1,50 @@
 // core/Canvas
+
+
+
 // `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
+var Canvas = exports.Canvas = extend(inherit(Node), {
 
 
 
-// Export the `Canvas` "class" and a shorthand.
-exports.Canvas = Canvas;
-exports.c = function (element) {
-	return new Canvas(element);
-};
+	init: function (element) {
+		Node.init.call(this);
 
+		// A user might want to access the `_root` property, even if this is the root node.
+		this._root = this;
 
+		// The canvas DOM node (`HTMLCanvasElement`).
+		if (!element)
+			throw new Error('No HTMLCanvasElement given.');
+		this.element = element;
+		// The rendering context (`RenderingContext2d`).
+		this.context = element.getContext('2d');
 
-// Let `Canvas` inherit from `Node`.
-inherit(Canvas, Node);
-
-
-
-// Create a new `Canvas` object using `element`.
-function Canvas (element) {
-	Node.call(this);    // call the super class constructor
-
-	// A user might want to access the `_root` property, no matter if (s)he is dealing with the root node (a `Canvas` object).
-	this._root = this;
-
-	// The canvas DOM node (`HTMLCanvasElement`).
-	this.element = element;
-	// The rendering context (`RenderingContext2d`).
-	this.context = element.getContext('2d');
-}
-
-
-
-// Add methods to the prototype of `Canvas`.
-extend(Canvas.prototype, {
+		return this;   // method chaining
+	},
 
 
 
 	// Clear the canvas.
 	clear: function () {
-		this.context.clearRect(0, 0, this.width, this.height);
-		// todo: Research the "canvas width height" trick. Maybe it is faster.
-		// http://simonsarris.com/blog/346-how-you-clear-your-canvas-matters
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	},
 
 
-	// Clear the canvas and draw all children draw to it.
+
+	// Draw all children draw to the canvas. Remember to call `clear` before.
 	draw: function () {
-		this.clear();
-		exports.array.foreach(this.children, 'draw');
+		array.foreach(this.children, 'draw');
 	}
 
 
 
 });
+
+
+
+// Export a shorthand.
+var c = exports.c = function (element) {
+	return inherit(Canvas)
+	.init(element);
+};

@@ -1,86 +1,81 @@
 // core/Node
-// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store child nodes in `children`.
-// *velo* works with a tree of nodes, each of which has a position and a rotation relative to its parent node. Whenever the user changes a node's `parent`, (relative) position or (relative) `rotation`, `_update` recomputes the (absolute) position and rotation. `Shape` objects inheriting from `Node` can then draw onto the untranslated and unrotated canvas using `_absolute`. This way, rendering will be fast, because the transformations do not have to be recomputed on each render cycle.
 
 
 
-// Export the `Node` "class" and a shorthand.
-exports.Node = Node;
-exports.n = function (options) {
-	return new Node(options);
-};
+// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`.
+var Node = exports.Node = {
 
 
 
-// Create a new `Node` based on `parent`, `position`, `rotation` and `children`.
-function Node (options) {
-	options = options || {};
+	init: function (options) {
+		options = options || {};
 
-	// The parent `Node` object.
-	this._parent = options.parent || null;
-	// The position relative to the node's parent as a `Vector` object.
-	this._position = options.position || exports.v();
-	// The rotation relative to the node's parent in radians.
-	this._rotation = options.rotation || 0;
-	// The list of child nodes.
-	this.children = new Array(options.children);
+		// The parent `Node` object. Default: `null`
+		this._parent = options.parent || null;
+		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
+		this._position = options.position || v();
+		// The rotation in radians (relative to the node's parent). Default: `0`
+		this._rotation = options.rotation || 0;
+		// The list of child nodes.
+		this.children = new Array(options.children);
 
-	Node.prototype._update.call(this);    // Recompute the the absolute translation.
-}
+		this._update();   // recompute the the absolute position
 
-
-
-// Add methods to the prototype of `Node`.
-extend(Node.prototype, {
+		return this;   // method chaining
+	},
 
 
 
-	// With no arguments, get the node's parent node. Otherwise, set the node's parent to `Node` and recompute the the absolute translation.
+	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_update()` to recompute the the absolute position. Otherwise return the current parent.
 	parent: function (node) {
-		if (arguments.length === 0)    // no parent node given
-			return this._parent    // work as getter
-
-		// parent node given, work as setter
-		this._parent = node || null;
-		this._root = node ? node._root : null;
-
-		this._update();    // Recompute the the absolute translation.
+		if (node) {
+			this._parent = node;
+			this._root = node._root;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._parent;
 	},
 
 
-	// With no arguments, get the node's position. Otherwise change the position and recompute the the absolute translation.
-	// If `relative` is `true`, translate position by `vector`. Otherwise, set the position to `vector`.
+
+	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_update()` to recompute the the absolute position. Otherwise return the current position.
+	// If `relative` is `true`, translate the position by `vector`. Otherwise, set the position to `vector` (without making a copy!).
 	position: function (vector, relative) {
-		if (arguments.length === 0)    // no vector given
-			return this._rotation;    // work as getter
-
-		// vector given, work as setter
-		if (relative === true)
-			this._position.add(vector);
-		else
-			this._position = node;
-
-		this._update();    // Recompute the the absolute translation.
-	},
-
-
-	// With no arguments, get the node's rotation. Otherwise, set the rotation to `angle` and recompute the the absolute translation.
-	rotation: function (angle) {
-		if (arguments.length === 0)    // no angle node given
-			return this._rotation    // work as getter
-
-		// angle given, work as setter
-		this._rotation = angle;
-
-		this._update();    // Recompute the the absolute translation.
+		if (vector) {
+			if (relative === true)
+				this._position.add(vector);
+			else
+				this._position = vector;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._position;
 	},
 
 
 
-	// Recompute the absolute translations in `_absolute` and `_update` all children.
-	// Note: This node's rotation doesn't affect its rotation, but its drawing and children.
+	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_update()` to recompute the the absolute position. Otherwise return the current rotation.
+	// If `relative` is `true`, add `angle` to the current rotation. Otherwise, set the rotation to `angle`.
+	rotation: function (angle, relative) {
+		if (angle !== null) {
+			if (relative === true)
+				this._rotation += angle;
+			else
+				this._rotation = angle;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._position;
+	},
+
+
+
+	// Recompute the node's absolute position and store it in `_absolute` and call `_update()` on all children.
+	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
 	_update: function () {
-		var thus = this, parent = thus._parent;    // aliases for shorter code
+		var thus = this;
+		var parent = thus._parent;   // just an proxy
 
 		thus._absRotation = thus._rotation;
 		if (parent){
@@ -89,22 +84,31 @@ extend(Node.prototype, {
 		} else
 			thus._absPosition = thus._position.clone();
 
-		// Call update on all child nodes, because they are affected by changes on this node.
-		exports.array.foreach(this.children, '_update');
+		// call `_update()` on all child nodes
+		array.foreach(this.children, '_update');
 	},
 
 
 
-	// Helper function to compute a node's absolute position based on
-	// - this node's (relative) position,
-	// - the parent node's (absolute) position,
-	// - the parent node's (absolute) rotation.
+	// A dumb helper function to compute a node's *absolute* position based on
+	// - its position,
+	// - the parent node's *absolute* position,
+	// - the parent node's *absolute* rotation.
 	_absolute: function (position, parentAbsolutePosition, parentAbsoluteRotation) {
-		return position.clone()    // Take this node's relative position, clone it,
-		.rotate(parentAbsoluteRotation)    // apply the parent node's (absolute) rotation
-		.add(parentAbsolutePosition);    // and add the parent node's (absolute) position.
+		return position
+		.clone()
+		.rotate(parentAbsoluteRotation)
+		.add(parentAbsolutePosition);
 	}
 
 
 
-});
+};
+
+
+
+// Export a shorthand.
+var n = exports.n = function (options) {
+	return inherit(Node)
+	.init(options);
+};

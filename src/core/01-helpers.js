@@ -1,40 +1,20 @@
 // core/helpers
-// `helpers` contains a collection of useful functions.
+// `helpers` contains a collection of internal helper functions.
 
 
 
-// todo: strict mdoe
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more.
+"strict mode";
 
 
 
-// A do-nothing function used as a default callback.
-var noop = function () {};
+// A do-nothing function used as default callback.
+var noop = exports.noop = function () {};
 
 
 
-// A reference to `hasOwnProperty`.
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
-var hasProp = {}.hasOwnProperty;
-
-
-
-// Let the child child "class" inherit from the parent "class".
-// Taken from the CoffeeScript project (http://techoctave.com/c7/posts/93-simple-javascript-inheritance-using-coffeescript-extends).
-var inherit = function (child, parent) {
-	for (var key in parent) {
-		if (hasProp.call(parent, key))
-			child[key] = parent[key];
-	}
-
-	function ctor() {
-		this.constructor = child;
-	}
-
-	ctor.prototype = parent.prototype;
-	child.prototype = new ctor();
-
-	return child;
-};
+// Just a proxy for shorter code.
+var inherit = exports.inherit = Object.create;
 
 
 
@@ -50,51 +30,38 @@ var extend = function (target, source) {
 
 
 
-// Call `method` by name with all further arguments on every item in the list.
-var call = function () {
-	new Array(arguments);    // Convert to real `Array`.
-	for (var i = 0, length = this.length; i < length; i++) {
-		this[i][arguments.shift()].apply(this[i], arguments);
-	}
-}
-
-
-
 // `Array` helpers
-exports.array = {
+var array = exports.array = {
 
-	// Add `item` to `array if it isn't alerady stored.
-	add: function (array, item) {
-		if (array.indexOf(item) < 0)
-			array.push(item);
+	// Add `item` to the array `arr` if it isn't alerady stored.
+	add: function (arr, item) {
+		if (!array.has(arr, item))
+			arr.push(item);
 	},
 
-	// Remove the first entry for `item` from `array`.
-	remove: function (array, item, i) {    // Short declaration of `i` in the arguments list.
-		if (i = array.indexOf(item) >= 0)
-			array.splice(i, item);
+	// Remove the first entry for `item` from the array `arr`.
+	remove: function (arr, item, i) {
+		if (i = arr.indexOf(item) >= 0)
+			arr.splice(i, 1);
 	},
 
-	// Return wether `item` exists in `array`.
-	has: function (array, item) {
-		return this._items.indexOf(item) >= 0;
+	// Return wether `item` exists in the array `arr`.
+	has: function (arr, item) {
+		return arr.indexOf(item) >= 0;
 	},
 
-	// Call `method` by name with all following arguments on every item in `array`.
-	foreach: function () {
-		var array = arguments[0];
-		var method = arguments[1];
-		arguments = exports.array.slice(2);
-		for (var i = 0, length = array.length; i < length; i++) {
-			if(!array[i])
-				continue;
-			array[i][method].apply(array[i], arguments);
+	// For every item in the array `arr` call `item[method]` with all following arguments.
+	foreach: function (arr, method, i, length) {
+		arguments = array.slice(arr, 2);
+		for (i = 0, length = arr.length; i < length; i++) {
+			if (arr[i])
+				arr[i][method].apply(arr[i], arguments);
 		}
 	},
 
-	// Works like `Array.prototype.slice`, but additionally requires `array` as an argument.
-	slice: function (array, i, j) {
-		return Array.prototype.slice.call(array, i, j);
+	// Proxy for `Array.prototype.slice`. Requires an array `arr` as an argument.
+	slice: function (arr, i, j) {
+		return Array.prototype.slice.call(arr, i, j);
 	}
 
 };

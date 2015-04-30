@@ -1,3 +1,5 @@
+# todo: upgrade deps, linting
+
 path		= require 'path'
 gulp		= require 'gulp'
 gutil		= require 'gulp-util'

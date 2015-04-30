@@ -1,4 +1,4 @@
-// velo | Jannis R | v0.1.0 | https://github.com/derhuerst/velo
+// velo | Jannis R | v0.2.0 | https://github.com/derhuerst/velo
 
 
 
@@ -6,42 +6,22 @@
 
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.velo=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // core/helpers
-// `helpers` contains a collection of useful functions.
+// `helpers` contains a collection of internal helper functions.
 
 
 
-// todo: strict mdoe
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more.
+"strict mode";
 
 
 
-// A do-nothing function used as a default callback.
-var noop = function () {};
+// A do-nothing function used as default callback.
+var noop = exports.noop = function () {};
 
 
 
-// A reference to `hasOwnProperty`.
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
-var hasProp = {}.hasOwnProperty;
-
-
-
-// Let the child child "class" inherit from the parent "class".
-// Taken from the CoffeeScript project (http://techoctave.com/c7/posts/93-simple-javascript-inheritance-using-coffeescript-extends).
-var inherit = function (child, parent) {
-	for (var key in parent) {
-		if (hasProp.call(parent, key))
-			child[key] = parent[key];
-	}
-
-	function ctor() {
-		this.constructor = child;
-	}
-
-	ctor.prototype = parent.prototype;
-	child.prototype = new ctor();
-
-	return child;
-};
+// Just a proxy for shorter code.
+var inherit = exports.inherit = Object.create;
 
 
 
@@ -57,207 +37,190 @@ var extend = function (target, source) {
 
 
 
-// Call `method` by name with all further arguments on every item in the list.
-var call = function () {
-	new Array(arguments);    // Convert to real `Array`.
-	for (var i = 0, length = this.length; i < length; i++) {
-		this[i][arguments.shift()].apply(this[i], arguments);
-	}
-}
-
-
-
 // `Array` helpers
-exports.array = {
+var array = exports.array = {
 
-	// Add `item` to `array if it isn't alerady stored.
-	add: function (array, item) {
-		if (array.indexOf(item) < 0)
-			array.push(item);
+	// Add `item` to the array `arr` if it isn't alerady stored.
+	add: function (arr, item) {
+		if (!array.has(arr, item))
+			arr.push(item);
 	},
 
-	// Remove the first entry for `item` from `array`.
-	remove: function (array, item, i) {    // Short declaration of `i` in the arguments list.
-		if (i = array.indexOf(item) >= 0)
-			array.splice(i, item);
+	// Remove the first entry for `item` from the array `arr`.
+	remove: function (arr, item, i) {
+		if (i = arr.indexOf(item) >= 0)
+			arr.splice(i, 1);
 	},
 
-	// Return wether `item` exists in `array`.
-	has: function (array, item) {
-		return this._items.indexOf(item) >= 0;
+	// Return wether `item` exists in the array `arr`.
+	has: function (arr, item) {
+		return arr.indexOf(item) >= 0;
 	},
 
-	// Call `method` by name with all following arguments on every item in `array`.
-	foreach: function () {
-		var array = arguments[0];
-		var method = arguments[1];
-		arguments = exports.array.slice(2);
-		for (var i = 0, length = array.length; i < length; i++) {
-			if(!array[i])
-				continue;
-			array[i][method].apply(array[i], arguments);
+	// For every item in the array `arr` call `item[method]` with all following arguments.
+	foreach: function (arr, method, i, length) {
+		arguments = array.slice(arr, 2);
+		for (i = 0, length = arr.length; i < length; i++) {
+			if (arr[i])
+				arr[i][method].apply(arr[i], arguments);
 		}
 	},
 
-	// Works like `Array.prototype.slice`, but additionally requires `array` as an argument.
-	slice: function (array, i, j) {
-		return Array.prototype.slice.call(array, i, j);
+	// Proxy for `Array.prototype.slice`. Requires an array `arr` as an argument.
+	slice: function (arr, i, j) {
+		return Array.prototype.slice.call(arr, i, j);
 	}
 
 };
 
 // core/Vector
-// `Vector` represents a 2D vector. It is used as a position or translation.
 
 
 
-// Export the `Vector` "class" and a shorthand.
-exports.Vector = Vector;
-exports.v = function (x, y) {
-	return new Vector(x, y);
-};
+// `Vector` represents a 2D vector. It can be used as a position or translation.
+var Vector = exports.Vector = {
 
 
 
-// Create a new Vector by `x` and `y`.
-function Vector (x, y){
-	this.x = x || 0;    // The x property, which can be changed without hassle.
-	this.y = y || 0;    // The y property, which can be changed without hassle.
-}
+	init: function (x, y){
+		this.x = x || 0;
+		this.y = y || 0;
+
+		return this;   // method chaining
+	},
 
 
 
-// We can easily overwrite the prototype because `Vector` has no super class.
-Vector.prototype = {
-
-
-
-	// Change the `x` and `y` values relatively. Either one `Vector` object or two values can be passed.
+	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
 	add: function (x, y) {
-		if (y !== null) {    // Two arguments have been passed, using them as raw values.
+		if (y !== null) {   // assuming two raw values
 			this.x += x;
 			this.y += y;
-		} else if (x !== null) {    // Only one argument has been passed, using it as a `Vector` object.
+		} else if (x !== null) {   // assuming one `Vector` object
 			this.x += x.x;
 			this.y += y.y;
 		}
 
-		return this;    // Make method chaining possible.
+		return this;   // method chaining
 	},
 
 
 
-	// Apply a rotation of `angle` to the `x` and `y` values.
-	rotate: function (angle) {    // todo: length
+	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
+	rotate: function (angle) {
 		this.x = Math.cos(angle) * x;
 		this.y = Math.sin(angle) * y;
 
-		return this;    // Make method chaining possible.
+		return this;   // method chaining
 	},
 
 
 
-	// Check if the `x` and `y` values of this vector are equal to given ones. Either one `Vector` object or two values can be passed.
+	// Check if the `x` and `y` values of this `Vector` are equal to given ones. Either one `Vector` object or two raw values can be passed.
 	equals: function (x, y) {
-		if (y !== null)    // Two arguments has been passed, using them as raw values.
+		if (y !== null)   // assuming two raw values
 			return this.x === x.x && this.y === x.y;
-		return this.x === x && this.y === y;
+		else   // assuming one `Vector` object
+			return this.x === x && this.y === y;
 	},
 
 
 
-	// Return a new `Vector` object with the same values. The returned vector then `equals` to this one.
+	// Return a new `Vector` object with the same values. The resulting vector is then `equal()` to this one.
 	clone: function () {
-		return exports.v(this.x, this.y);    // shorthand for `new Vector(…)`
+		return v(this.x, this.y);
 	}
 
 
 
 };
 
-// core/Node
-// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store child nodes in `children`.
-// *velo* works with a tree of nodes, each of which has a position and a rotation relative to its parent node. Whenever the user changes a node's `parent`, (relative) position or (relative) `rotation`, `_update` recomputes the (absolute) position and rotation. `Shape` objects inheriting from `Node` can then draw onto the untranslated and unrotated canvas using `_absolute`. This way, rendering will be fast, because the transformations do not have to be recomputed on each render cycle.
 
 
-
-// Export the `Node` "class" and a shorthand.
-exports.Node = Node;
-exports.n = function (options) {
-	return new Node(options);
+// Export a shorthand.
+var v = exports.v = function (x, y) {
+	return inherit(Vector)
+	.init(x, y);
 };
 
-
-
-// Create a new `Node` based on `parent`, `position`, `rotation` and `children`.
-function Node (options) {
-	options = options || {};
-
-	// The parent `Node` object.
-	this._parent = options.parent || null;
-	// The position relative to the node's parent as a `Vector` object.
-	this._position = options.position || exports.v();
-	// The rotation relative to the node's parent in radians.
-	this._rotation = options.rotation || 0;
-	// The list of child nodes.
-	this.children = new Array(options.children);
-
-	Node.prototype._update.call(this);    // Recompute the the absolute translation.
-}
+// core/Node
 
 
 
-// Add methods to the prototype of `Node`.
-extend(Node.prototype, {
+// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`.
+var Node = exports.Node = {
 
 
 
-	// With no arguments, get the node's parent node. Otherwise, set the node's parent to `Node` and recompute the the absolute translation.
+	init: function (options) {
+		options = options || {};
+
+		// The parent `Node` object. Default: `null`
+		this._parent = options.parent || null;
+		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
+		this._position = options.position || v();
+		// The rotation in radians (relative to the node's parent). Default: `0`
+		this._rotation = options.rotation || 0;
+		// The list of child nodes.
+		this.children = new Array(options.children);
+
+		this._update();   // recompute the the absolute position
+
+		return this;   // method chaining
+	},
+
+
+
+	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_update()` to recompute the the absolute position. Otherwise return the current parent.
 	parent: function (node) {
-		if (arguments.length === 0)    // no parent node given
-			return this._parent    // work as getter
-
-		// parent node given, work as setter
-		this._parent = node || null;
-		this._root = node ? node._root : null;
-
-		this._update();    // Recompute the the absolute translation.
+		if (node) {
+			this._parent = node;
+			this._root = node._root;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._parent;
 	},
 
 
-	// With no arguments, get the node's position. Otherwise change the position and recompute the the absolute translation.
-	// If `relative` is `true`, translate position by `vector`. Otherwise, set the position to `vector`.
+
+	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_update()` to recompute the the absolute position. Otherwise return the current position.
+	// If `relative` is `true`, translate the position by `vector`. Otherwise, set the position to `vector` (without making a copy!).
 	position: function (vector, relative) {
-		if (arguments.length === 0)    // no vector given
-			return this._rotation;    // work as getter
-
-		// vector given, work as setter
-		if (relative === true)
-			this._position.add(vector);
-		else
-			this._position = node;
-
-		this._update();    // Recompute the the absolute translation.
-	},
-
-
-	// With no arguments, get the node's rotation. Otherwise, set the rotation to `angle` and recompute the the absolute translation.
-	rotation: function (angle) {
-		if (arguments.length === 0)    // no angle node given
-			return this._rotation    // work as getter
-
-		// angle given, work as setter
-		this._rotation = angle;
-
-		this._update();    // Recompute the the absolute translation.
+		if (vector) {
+			if (relative === true)
+				this._position.add(vector);
+			else
+				this._position = vector;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._position;
 	},
 
 
 
-	// Recompute the absolute translations in `_absolute` and `_update` all children.
-	// Note: This node's rotation doesn't affect its rotation, but its drawing and children.
+	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_update()` to recompute the the absolute position. Otherwise return the current rotation.
+	// If `relative` is `true`, add `angle` to the current rotation. Otherwise, set the rotation to `angle`.
+	rotation: function (angle, relative) {
+		if (angle !== null) {
+			if (relative === true)
+				this._rotation += angle;
+			else
+				this._rotation = angle;
+			this._update();   // recompute the the absolute position
+			return this;   // method chaining
+		} else
+			return this._position;
+	},
+
+
+
+	// Recompute the node's absolute position and store it in `_absolute` and call `_update()` on all children.
+	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
 	_update: function () {
-		var thus = this, parent = thus._parent;    // aliases for shorter code
+		var thus = this;
+		var parent = thus._parent;   // just an proxy
 
 		thus._absRotation = thus._rotation;
 		if (parent){
@@ -266,147 +229,147 @@ extend(Node.prototype, {
 		} else
 			thus._absPosition = thus._position.clone();
 
-		// Call update on all child nodes, because they are affected by changes on this node.
-		exports.array.foreach(this.children, '_update');
+		// call `_update()` on all child nodes
+		array.foreach(this.children, '_update');
 	},
 
 
 
-	// Helper function to compute a node's absolute position based on
-	// - this node's (relative) position,
-	// - the parent node's (absolute) position,
-	// - the parent node's (absolute) rotation.
+	// A dumb helper function to compute a node's *absolute* position based on
+	// - its position,
+	// - the parent node's *absolute* position,
+	// - the parent node's *absolute* rotation.
 	_absolute: function (position, parentAbsolutePosition, parentAbsoluteRotation) {
-		return position.clone()    // Take this node's relative position, clone it,
-		.rotate(parentAbsoluteRotation)    // apply the parent node's (absolute) rotation
-		.add(parentAbsolutePosition);    // and add the parent node's (absolute) position.
+		return position
+		.clone()
+		.rotate(parentAbsoluteRotation)
+		.add(parentAbsolutePosition);
 	}
 
 
 
-});
-
-// core/Canvas
-// `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
-
-
-
-// Export the `Canvas` "class" and a shorthand.
-exports.Canvas = Canvas;
-exports.c = function (element) {
-	return new Canvas(element);
 };
 
 
 
-// Let `Canvas` inherit from `Node`.
-inherit(Canvas, Node);
+// Export a shorthand.
+var n = exports.n = function (options) {
+	return inherit(Node)
+	.init(options);
+};
+
+// core/Canvas
 
 
 
-// Create a new `Canvas` object using `element`.
-function Canvas (element) {
-	Node.call(this);    // call the super class constructor
-
-	// A user might want to access the `_root` property, no matter if (s)he is dealing with the root node (a `Canvas` object).
-	this._root = this;
-
-	// The canvas DOM node (`HTMLCanvasElement`).
-	this.element = element;
-	// The rendering context (`RenderingContext2d`).
-	this.context = element.getContext('2d');
-}
+// `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
+var Canvas = exports.Canvas = extend(inherit(Node), {
 
 
 
-// Add methods to the prototype of `Canvas`.
-extend(Canvas.prototype, {
+	init: function (element) {
+		Node.init.call(this);
+
+		// A user might want to access the `_root` property, even if this is the root node.
+		this._root = this;
+
+		// The canvas DOM node (`HTMLCanvasElement`).
+		if (!element)
+			throw new Error('No HTMLCanvasElement given.');
+		this.element = element;
+		// The rendering context (`RenderingContext2d`).
+		this.context = element.getContext('2d');
+
+		return this;   // method chaining
+	},
 
 
 
 	// Clear the canvas.
 	clear: function () {
-		this.context.clearRect(0, 0, this.width, this.height);
-		// todo: Research the "canvas width height" trick. Maybe it is faster.
-		// http://simonsarris.com/blog/346-how-you-clear-your-canvas-matters
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	},
 
 
-	// Clear the canvas and draw all children draw to it.
+
+	// Draw all children draw to the canvas. Remember to call `clear` before.
 	draw: function () {
-		this.clear();
-		exports.array.foreach(this.children, 'draw');
+		array.foreach(this.children, 'draw');
 	}
 
 
 
 });
 
-// shapes/Shape
-// `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
 
 
-
-// Export the `Shape` "class" and a shorthand.
-exports.Shape = Shape;
-exports.sh = function (options) {
-	return new Shape(options);
+// Export a shorthand.
+var c = exports.c = function (element) {
+	return inherit(Canvas)
+	.init(element);
 };
 
-
-
-// Let `Shape` inherit from `Node`.
-inherit(Shape, Node);
+// shapes/Shape
 
 
 
-// Create a new `Shape` based on `options`.
-function Shape (options) {
-	options = options || {};
-
-	Node.call(options);    // call the super class constructor
-
-	// The color the shape will be filled with. Can be any valid CSS color.
-	this.fillColor = options.fillColor || 'gray';
-	// The color the shape will be bordered with. Can be any valid CSS color.
-	this.strokeColor = options.strokeColor || 'black';
-	// The width of the border.
-	this.lineWidth = options.lineWidth !== null ? options.lineWidth : 1;
-}
+// `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
+var Shape = exports.Shape = extend(inherit(Node), {
 
 
 
-// Add methods to the prototype of `Shape`.
+	init: function (options) {
+		options = options || {};
+
+		Node.init.call(this, options);
+
+		// The color the shape will be filled with. Can be any valid CSS color.
+		this.fillColor = options.fillColor || 'gray';
+		// The color the shape will be bordered with. Can be any valid CSS color.
+		this.strokeColor = options.strokeColor || 'black';
+		// The width of the border.
+		this.lineWidth = options.lineWidth !== null ? options.lineWidth : 1;
+
+		return this;   // method chaining
+	},
 
 
-// Prepare drawing the shape by changing the colors of the rendering context.
-Shape.prototype.draw = function () {
-	var context = this._root.context;    // aliases for shorter code
+	// Prepare drawing the shape by changing the colors of the canvas rendering context.
+	draw: function () {
+		var context = this._root.context;   // proxy
 
-	context.fillStyle = this.fillColor;
-	context.strokeStyle = this.strokeColor;
-	context.lineWidth = this.lineWidth;
+		context.fillStyle = this.fillColor;
+		context.strokeStyle = this.strokeColor;
+		context.lineWidth = this.lineWidth;
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var c = exports.c = function (element) {
+	return inherit(Canvas)
+	.init(element);
 };
 
 // 02-util/01-RenderingInterval
 
 
 
-exports.RenderingInterval = RenderingInterval;
-exports.ri = function (callback) {
-	return new RenderingInterval(callback);
-};
+// todo: description
+var RenderingInterval = exports.RenderingInterval = {
 
 
 
-function RenderingInterval (callback) {
-	this.callback = callback || noop;
-	this.stop();
-}
+	init: function (callback) {
+		this.callback = callback || noop;
+		this.stop();
 
-
-
-RenderingInterval.prototype = {
+		return this;   // method chaining
+	},
 
 
 
@@ -441,342 +404,391 @@ RenderingInterval.prototype = {
 
 };
 
+
+
+// Export a shorthand.
+var ri = exports.ri = function (callback) {
+	return inherit(RenderingInterval)
+	.init(callback);
+};
+
 // 02-util/02-Interval
 
 
 
-exports.Interval = Interval;
-exports.i = function (callback, interval) {
-	return new Interval(callback, interval);
+// todo: description
+var Interval = exports.Interval = extend(inherit(RenderingInterval), {
+
+
+
+	init: function (callback, interval) {
+		RenderingInterval.call(this, callback);
+
+		this.interval = interval;
+	},
+
+
+
+	_queue: function () {
+		setTimeout(this._call.bind(this), this.interval);
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var i = exports.i = function (callback, interval) {
+	return inherit(Interval)
+	.init(callback, interval);
 };
 
-
-
-// Let `Interval` inherit from `RenderingInterval`.
-inherit(Interval, RenderingInterval);
+// shapes/Spot
 
 
 
-function Interval (callback, interval) {
-	RenderingInterval.call(this, callback);
-
-	this.interval = interval;
-}
+// `Spot` is a point in the visual sense: It is rendered as a small colored circle.
+var Spot = exports.Spot = extend(inherit(Shape), {
 
 
 
-Interval.prototype._queue = function () {
-	setTimeout(this._call.bind(this), this.interval);
-};
+	init: function (options) {
+		options = options || {};
 
-// shapes/Point
+		Shape.init.call(this, options);
 
+		// The size of the rendered dot.
+		this.size = options.size !== null ? options.size : 2;
 
-
-// Export the `Point` "class" and a shorthand.
-exports.Point = Point;
-exports.pt = function (options) {
-	return new Point(options);
-};
+		return this;   // method chaining
+	},
 
 
 
-// Let `Point` inherit from `Shape`.
-inherit(Point, Shape);
+	// Draw a little dot to the canvas.
+	draw: function () {
+		// proxies
+		var thus = this,
+		context = thus._root.context,
+		position = thus._absPosition,
+		size = thus.size|0;   // `|0` is equivalent to `Math.floor(…)`
+
+		Shape.draw.call(thus);   // prepare drawing
+
+		context.fillRect(position.x|0, position.y|0, size, size);
+		if (thus.lineWidth > 0)
+			context.strokeRect(position.x|0, position.y|0, size, size);
+	}
 
 
 
-// todo
-function Point (options) {
-	options = options || {};
-
-	Shape.call(options);    // call the super class constructor
-
-	// The size of the rendered dot.
-	this.size = options.size !== null ? options.size : 2;
-}
+});
 
 
 
-// Add methods to the prototype of `Point`.
-
-
-// Draw a little dot to the canvas.
-Point.prototype.draw = function () {
-	// aliases for shorter code
-	var thus = this,
-	context = thus._root.context,
-	position = thus._absPosition,
-	size = thus.size|0;
-
-	// Prepare drawing.
-	Shape.draw.call(thus);
-
-	context.fillRect(position.x|0, position.y|0, size, size);
-	if (thus.lineWidth > 0)
-		context.strokeRect(position.x|0, position.y|0, size, size);
+// Export a shorthand.
+var s = exports.s = function (options) {
+	return inherit(Spot)
+	.init(options);
 };
 
 // shapes/Polygon
 
 
 
-// Export the `Polygon` "class" and a shorthand.
-exports.Polygon = Polygon;
-exports.p = function (options) {
-	return new Polygon(options);
-};
+// A `Polygon` is a `Shape` bounded by a list of vertix nodes.
+var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 
 
-// Let `Polygon` inherit from `Shape`.
-inherit(Polygon, Shape);
+	init: function (options) {
+		options = options || {};
+
+		Shape.init.call(options);    // call the super class constructor
+
+		// The list of vertex nodes the polygon exists of.
+		// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+		this._vertices = this.vertices = new Array(options.vertices);
+
+		return this;   // method chaining
+	},
 
 
 
-// A polygon is a shape bounded by a list of vertix nodes.
-function Polygon (options) {
-	options = options || {};
+	// Draw the polygon to the canvas.
+	draw: function () {
+		// proxies
+		var thus = this,
+		context = thus._root.context,
+		vertices = thus._vertices;
 
-	Shape.call(options);    // call the super class constructor
+		// prepare drawing
+		Shape.draw.call(thus);
+		context.beginPath();
 
-	// The list of vertex nodes the polygon exists of.
-	// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
-	this._vertices = this.vertices = new Array(options.vertices);
-}
+		for (var vertex, i = 0, length = vertices.length; i < length; i++) {
+			vertex = thus._absolute(vertices[i], thus._absPosition, thus._absRotation);
+			context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
+		}
 
-
-
-// Add methods to the prototype of `Polygon`.
-
-
-// Draw the polygon to the canvas.
-Polygon.prototype.draw = function () {
-	// aliases for shorter code
-	var thus = this,
-	context = thus._root.context,
-	vertices = thus._vertices;
-
-	// Prepare drawing.
-	Shape.draw.call(thus);
-	context.beginPath();
-	var i, vertex;
-
-	for (i = 0, length = vertices.length; i < length; i++) {
-		vertex = thus._absolute(vertices[i], thus._absPosition, thus._absRotation);
-		context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
+		// Finish drawing.
+		context.closePath();
+		context.fill();
+		if (thus.lineWidth > 0)
+			context.stroke();
 	}
 
-	// Finish drawing.
-	context.closePath();
-	context.fill();
-	if (thus.lineWidth > 0)
-		context.stroke();
+
+
+});
+
+
+
+// Export a shorthand.
+var p = exports.p = function (options) {
+	return inherit(Polygon)
+	.init(options);
 };
 
 // shapes/Rectangle
 
 
 
-// Export the `Rectangle` "class" and a shorthand.
-exports.Rectangle = Rectangle;
-exports.p = function (options) {
-	return new Rectangle(options);
-};
-
-
-
-// Let `Rectangle` inherit from `Polygon`.
-inherit(Rectangle, Polygon);
-
-
-
 // Yeah, a `Reactangle` is a rectangle.
-function Rectangle (options) {
-	options = options || {};
-
-	Polygon.call(options);    // call the super class constructor
-
-	// The rectangle's width. Pretty obvious.
-	this.width = options.width !== null ? options.width : 60;
-	// The rectangle's height. Pretty obvious.
-	this.height = options.height !== null ? options.height : 40;
-
-	// Remove the alias to `_vertices` set by `Polygon`.
-	delete this.vertices;
-}
+var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 
 
 
-// Add methods to the prototype of `Rectangle`.
+	init: function (options) {
+		options = options || {};
+
+		Polygon.init.call(this, options);
+
+		// The rectangle's width. Pretty obvious.
+		this._width = options.width !== null ? options.width : 60;
+		// The rectangle's height. Pretty obvious.
+		this._height = options.height !== null ? options.height : 40;
+
+		// `Polygon` exposes `vertices`, an alias to `_vertices`, intended to be a straightforward way to manipulate the path. However, because `Rectangle` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Rectangle`, leaving only the `_vertices` intended for private use.
+		delete this.vertices;
+
+		return this;   // method chaining
+	},
 
 
-// Recompose the `vertices` list.
-Rectangle.prototype._update = function () {
-	var thus = this;    // alias for shorter code
 
-	thus._vertices = [
-		exports.v(0, 0),
-		exports.v(thus.width, 0),
-		exports.v(thus.width, thus.height),
-		exports.v(0, thus.height)
-	];
+	// Getter Setter: If a `width` is given, change it on this `Rectangle` and call `_update()` to recalculate the `vertices` array. Otherwise return the current `_width`.
+	width: function (width) {
+		if (width !== null) {
+			this._width = width;
+			this._update();
+			return this;   // method chaining
+		} else
+			return this._width;   // method chaining
+	},
 
-	Node._update.call(this);    // Update the rest.
+
+
+	// Getter Setter: If a `height` is given, change it on this `Rectangle` and call `_update()` to recalculate the `vertices` array. Otherwise return the current `_height`.
+	height: function (height) {
+		if (height !== null) {
+			this._height = height;
+			this._update();
+			return this;   // method chaining
+		} else
+			return this._height;   // method chaining
+	},
+
+
+
+	// Recalculate the `vertices` array.
+	_update: function () {
+		var thus = this;   // alias for shorter code
+
+		thus._vertices = [
+			new Vector(0, 0),
+			new Vector(thus.width, 0),
+			new Vector(thus.width, thus.height),
+			new Vector(0, thus.height)
+		];
+
+		Node._update.call(thus);   // let `Node._update` call the children.
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var r = exports.r = function (options) {
+	return inherit(Rectangle)
+	.init(options);
 };
 
 // shapes/Ellipse
 
 
 
-// Export the `Ellipse` "class" and a shorthand.
-exports.Ellipse = Ellipse;
-exports.e = function (options) {
-	return new Ellipse(options);
+// `Ellipse` is a ellipse, drawn around its `position`.
+var Ellipse = exports.Ellipse = extend(inherit(Shape), {
+
+
+
+	init: function (options) {
+		options = options || {};
+
+		Shape.init.call(this, options);
+
+		// the ellipse's width, pretty obvious
+		this.width = options.width !== null ? options.width : 60;
+		// the ellipse's height, pretty obvious
+		this.height = options.height !== null ? options.height : 40;
+
+		return this;   // method chaining
+	},
+
+
+
+	// Draw the ellipse to the canvas.
+	draw: function () {
+		// aliases for shorter code
+		var thus = this,
+		context = thus._root.context;
+
+		// Prepare drawing.
+		context.save();
+		Shape.draw.call(thus);
+		context.translate(thus._absPosition|0);
+		context.rotate(thus._absRotation);
+		context.scale(1, thus.height / thus.width);   // todo: Use `|0` here?
+		context.beginPath();
+
+		context.arc(0, 0, thus.width / 2|0, 0, Math.PI * 2);   // todo: Use `|0` here?
+
+		// Finish drawing.
+		context.closePath();
+		context.fill();
+		if (thus.lineWidth > 0)
+			context.stroke();
+		context.restore();
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var e = exports.e = function (options) {
+	return inherit(Ellipse)
+	.init(options);
 };
 
-
-
-// Let `Ellipse` inherit from `Shape`.
-inherit(Ellipse, Shape);
+// shapes/Square
 
 
 
-// Yeah, a `Ellipse` is a ellipse, drawn around its `position`.
-function Ellipse (options) {
-	options = options || {};
-
-	Shape.call(options);    // call the super class constructor
-
-	// The ellipse's width. Pretty obvious.
-	this.width = options.width !== null ? options.width : 60;
-	// The ellipse's height. Pretty obvious.
-	this.height = options.height !== null ? options.height : 40;
-}
+// Yeah, a `Square` is a square.
+var Square = exports.Square = extend(inherit(Polygon), {
 
 
 
-// Add methods to the prototype of `Ellipse`.
+	init: function (options) {
+		options = options || {};
+
+		Polygon.init.call(this, options);
+
+		// The square's width and height. Pretty obvious.
+		this.size = options.size !== null ? options.size : 2;
+
+		// `Polygon` exposes `vertices`, an alias to `_vertices`, intended to be a straightforward way to manipulate the path. However, because `Square` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Square`, leaving only the `_vertices` intended for private use.
+		delete this.vertices;
+
+		return this;   // method chaining
+	},
 
 
-// Draw the ellipse to the canvas.
-Ellipse.prototype.draw = function () {
-	// aliases for shorter code
-	var thus = this,
-	context = thus._root.context;
+	// Recompose the `vertices` list.
+	_update: function () {
+		var thus = this;    // alias for shorter code
 
-	// Prepare drawing.
-	context.save();
-	Shape.draw.call(thus);
-	context.translate(thus._absPosition|0);
-	context.rotate(thus._absRotation);
-	context.scale(1, thus.height / thus.width);    // todo: Use `|0` here?
-	context.beginPath();
+		thus._vertices = [
+			exports.v(0, 0),
+			exports.v(thus.size, 0),
+			exports.v(thus.size, thus.size),
+			exports.v(0, thus.size)
+		];
 
-	context.arc(0, 0, thus.width / 2|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		Node._update.call(this);    // Update the rest.
+	}
 
-	// Finish drawing.
-	context.closePath();
-	context.fill();
-	if (thus.lineWidth > 0)
-		context.stroke();
-	context.restore();
+
+
+});
+
+
+
+// Export a shorthand.
+var sq = exports.sq = function (options) {
+	return inherit(Square)
+	.init(options);
 };
 
-// convenience/Square
-
-
-
-// Export the `Square` "class" and a shorthand.
-exports.Square = Square;
-exports.s = function (options) {
-	return new Square(options);
-};
-
-
-
-// Let `Square` inherit from `Polygon`.
-inherit(Square, Polygon);
-
-
-
-// Yeah, a `Reactangle` is a rectangle.
-function Square (options) {
-	Polygon.call(options);    // call the super class constructor
-
-	// The square's width and height. Pretty obvious.
-	this.size = options.size !== null ? options.size : 2;
-
-	// Remove the alias to `_vertices` set by `Polygon`.
-	delete this.vertices;
-}
-
-
-
-// Add methods to the prototype of `Square`.
-
-
-// Recompose the `vertices` list.
-Square.prototype._update = function () {
-	var thus = this;    // alias for shorter code
-
-	thus._vertices = [
-		exports.v(0, 0),
-		exports.v(thus.size, 0),
-		exports.v(thus.size, thus.size),
-		exports.v(0, thus.size)
-	];
-
-	Node._update.call(this);    // Update the rest.
-};
-
-// convenience/Circle
-
-
-
-// Export the `Circle` "class" and a shorthand.
-exports.Circle = Circle;
-exports.e = function (options) {
-	return new Circle(options);
-};
-
-
-
-// Let `Circle` inherit from `Shape`.
-inherit(Circle, Shape);
+// shapes/Circle
 
 
 
 // Yeah, a `Circle` is a circle, drawn around its `position`.
-function Circle (options) {
-	Shape.call(options);    // call the super class constructor
-
-	// The circle's radius. Pretty obvious.
-	this.radius = options.radius !== null ? options.radius : 50;
-}
+var Circle = exports.Circle = extend(inherit(Shape), {
 
 
 
-// Add methods to the prototype of `Circle`.
+	init: function (options) {
+		options = options || {};
+
+			Shape.init.call(this, options);
+
+		// The circle's radius. Pretty obvious.
+		this.radius = options.radius !== null ? options.radius : 50;
+
+		return this;   // method chaining
+	},
 
 
-// Draw the circle to the canvas.
-Circle.prototype.draw = function () {
-	// aliases for shorter code
-	var thus = this,
-	context = thus._root.context;
+	// Draw the circle to the canvas.
+	draw: function () {
+		// aliases for shorter code
+		var thus = this,
+		context = thus._root.context;
 
-	// Prepare drawing.
-	Shape.draw.call(thus);
-	context.beginPath();
+		// Prepare drawing.
+		Shape.draw.call(thus);
+		context.beginPath();
 
-	context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
-	// Finish drawing.
-	context.closePath();
-	context.fill();
-	if (thus.lineWidth > 0)
-		context.stroke();
+		// Finish drawing.
+		context.closePath();
+		context.fill();
+		if (thus.lineWidth > 0)
+			context.stroke();
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var cl = exports.cl = function (options) {
+	return inherit(Circle)
+	.init(options);
 };
 },{}]},{},[1])(1)
 });

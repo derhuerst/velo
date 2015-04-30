@@ -1,6 +1,6 @@
 # velo – a lightweight canvas 2D library
 
-***velo* is a modern and lightweight canvas 2D library** written in vanilla JavaScript. It offers a simple and straightforward API and keeps a low footprint. It is licensed unter the terms of the [MIT License](LICENSE.md). Minified, **the default build is smaller than 7kb**, which makes it fit perfectly for small websites.
+***velo* is a modern and lightweight canvas 2D library** written in vanilla JavaScript. It offers a simple and straightforward API and embraces [prototypal programming](http://davidwalsh.name/javascript-objects-deconstruction#simpler-object-object), keeping it **below 7kb (minified)**.
 
 - [How do I use *velo*?](#getting-started)
 - [List of available modules](#modules)
@@ -10,13 +10,15 @@
 
 
 
+## License
+
+*velo* is licensed unter the terms of the [MIT License](LICENSE.md).
+
+
 
 ## Getting Started
 
-[Grab the latest release](https://github.com/derhuerst/velo/releases) and unpack it. The default *velo* distribution file including the [default modules](#modules) will be **in the `dist` directory**.
-
-*API examples coming soon.*
-
+[Grab the latest release](https://github.com/derhuerst/velo/releases) and unpack it. The default *velo* **distribution files** including the [default modules](#modules) will be **in `dist/`**.
 
 
 
@@ -28,8 +30,7 @@
 |:--:|:--:|:--|
 |[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/04-Node.js), [`Canvas`](src/core/05-Canvas.js), [`Shape`](src/core/06-Shape.js)|
 |[util](src/util)|✔|[`Rendering`](src/util/01-Rendering.js), [`Interval`](src/util/02-Interval.js)|
-|[shapes](src/shapes)|✔|[`Point`](src/shapes/01-Point.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js)|
-|[convenience](src/convenience)|✔|[`Square`](src/convenience/01-Square.js), [`Circle`](src/convenience/02-Circle.js)|
+|[shapes](src/shapes)|✔|[`Spot`](src/shapes/01-Spot.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js), [`Square`](src/shapes/05-Square.js), [`Circle`](src/shapes/06-Circle.js)|
 |[colors](src/colors)|x|**unfinished**; [`Color`](src/colors/01-Color.js), [`Hex`](src/colors/02-Hex.js), [`RGB`](src/colors/02-RGB.js), [`RGBA`](src/colors/02-RGBA.js)|
 
 

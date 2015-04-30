@@ -2,26 +2,31 @@
 
 
 
-exports.Interval = Interval;
-exports.i = function (callback, interval) {
-	return new Interval(callback, interval);
-};
+// todo: description
+var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 
 
-// Let `Interval` inherit from `RenderingInterval`.
-inherit(Interval, RenderingInterval);
+	init: function (callback, interval) {
+		RenderingInterval.call(this, callback);
+
+		this.interval = interval;
+	},
 
 
 
-function Interval (callback, interval) {
-	RenderingInterval.call(this, callback);
-
-	this.interval = interval;
-}
+	_queue: function () {
+		setTimeout(this._call.bind(this), this.interval);
+	}
 
 
 
-Interval.prototype._queue = function () {
-	setTimeout(this._call.bind(this), this.interval);
+});
+
+
+
+// Export a shorthand.
+var i = exports.i = function (callback, interval) {
+	return inherit(Interval)
+	.init(callback, interval);
 };
