@@ -93,12 +93,12 @@ var Vector = exports.Vector = {
 
 	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
 	add: function (x, y) {
-		if (y !== null) {   // assuming two raw values
+		if (arguments.length >= 2) {   // assuming two raw values
 			this.x += x;
 			this.y += y;
-		} else if (x !== null) {   // assuming one `Vector` object
+		} else if (arguments.length === 1 && arguments[0]) {   // assuming one `Vector` object
 			this.x += x.x;
-			this.y += y.y;
+			this.y += x.y;
 		}
 
 		return this;   // method chaining
@@ -108,8 +108,8 @@ var Vector = exports.Vector = {
 
 	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
 	rotate: function (angle) {
-		this.x = Math.cos(angle) * x;
-		this.y = Math.sin(angle) * y;
+		this.x = Math.cos(angle) * this.x;
+		this.y = Math.sin(angle) * this.y;
 
 		return this;   // method chaining
 	},
@@ -156,95 +156,81 @@ var Node = exports.Node = {
 		options = options || {};
 
 		// The parent `Node` object. Default: `null`
-		this._parent = options.parent || null;
+		this.parent(options.parent);
 		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
-		this._position = options.position || v();
+		this._p = options.position || v();
 		// The rotation in radians (relative to the node's parent). Default: `0`
-		this._rotation = options.rotation || 0;
+		this._r = options.rotation || 0;
 		// The list of child nodes.
-		this.children = new Array(options.children);
+		this.children = new Array(options.children || 0);
 
-		this._update();   // recompute the the absolute position
+		this._aR = 0;   // cached absolute rotation
+		this._aR = 0;   // cached absolute rotation
+		this._u();   // recompute the absolute values
 
 		return this;   // method chaining
 	},
 
 
 
-	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_update()` to recompute the the absolute position. Otherwise return the current parent.
+	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_u()` to recompute the absolute values. Otherwise return the current parent.
 	parent: function (node) {
 		if (node) {
-			this._parent = node;
-			this._root = node._root;
-			this._update();   // recompute the the absolute position
+			this._pn = node;
+			this._rn = node._rn;
+			this._u();   // recompute the the absolute position
 			return this;   // method chaining
 		} else
-			return this._parent;
+			return this._pn;
 	},
 
 
 
-	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_update()` to recompute the the absolute position. Otherwise return the current position.
+	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_u()` to recompute the absolute values. Otherwise return the current position.
 	// If `relative` is `true`, translate the position by `vector`. Otherwise, set the position to `vector` (without making a copy!).
 	position: function (vector, relative) {
 		if (vector) {
 			if (relative === true)
-				this._position.add(vector);
+				this._p.add(vector);
 			else
-				this._position = vector;
-			this._update();   // recompute the the absolute position
+				this._p = vector;
+			this._u();   // recompute the the absolute position
 			return this;   // method chaining
 		} else
-			return this._position;
+			return this._p;
 	},
 
 
 
-	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_update()` to recompute the the absolute position. Otherwise return the current rotation.
+	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_u()` to recompute the absolute values. Otherwise return the current rotation.
 	// If `relative` is `true`, add `angle` to the current rotation. Otherwise, set the rotation to `angle`.
 	rotation: function (angle, relative) {
 		if (angle !== null) {
 			if (relative === true)
-				this._rotation += angle;
+				this._r += angle;
 			else
-				this._rotation = angle;
-			this._update();   // recompute the the absolute position
+				this._r = angle;
+			this._u();   // recompute the the absolute position
 			return this;   // method chaining
 		} else
-			return this._position;
+			return this._p;
 	},
 
 
 
-	// Recompute the node's absolute position and store it in `_absolute` and call `_update()` on all children.
+	// Recompute the node's absolute values and store them in `_aP` and `_aR`, then call `_u()` on all children.
 	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
-	_update: function () {
-		var thus = this;
-		var parent = thus._parent;   // just an proxy
+	_u: function () {
+		var thus = this;   // just an proxy
 
-		thus._absRotation = thus._rotation;
-		if (parent){
-			thus._absPosition = thus._absolute(thus._position, parent._absPosition, parent._absRotation);
-			thus._absRotation += parent._absRotation;
-		} else
-			thus._absPosition = thus._position.clone();
+		if (!thus._pn || !thus._p) return;
 
-		// call `_update()` on all child nodes
-		array.foreach(this.children, '_update');
+		thus._aP = thus._p.clone().rotate(thus._pn._aR).add(thus._pn._aP);
+		thus._aR = thus._pn._aR + thus._r;
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	},
-
-
-
-	// A dumb helper function to compute a node's *absolute* position based on
-	// - its position,
-	// - the parent node's *absolute* position,
-	// - the parent node's *absolute* rotation.
-	_absolute: function (position, parentAbsolutePosition, parentAbsoluteRotation) {
-		return position
-		.clone()
-		.rotate(parentAbsoluteRotation)
-		.add(parentAbsolutePosition);
-	}
 
 
 
@@ -270,8 +256,8 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 	init: function (element) {
 		Node.init.call(this);
 
-		// A user might want to access the `_root` property, even if this is the root node.
-		this._root = this;
+		// A user might want to access the `_rn` property, even if this is the root node.
+		this._rn = this;
 
 		// The canvas DOM node (`HTMLCanvasElement`).
 		if (!element)
@@ -287,7 +273,7 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 
 	// Clear the canvas.
 	clear: function () {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.clearRect(0, 0, this.element.width, this.element.height);
 	},
 
 
@@ -336,7 +322,7 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 	// Prepare drawing the shape by changing the colors of the canvas rendering context.
 	draw: function () {
-		var context = this._root.context;   // proxy
+		var context = this._rn.context;   // proxy
 
 		context.fillStyle = this.fillColor;
 		context.strokeStyle = this.strokeColor;
@@ -469,17 +455,19 @@ var Spot = exports.Spot = extend(inherit(Shape), {
 
 	// Draw a little dot to the canvas.
 	draw: function () {
-		// proxies
 		var thus = this,
-		context = thus._root.context,
-		position = thus._absPosition,
+		x = thus._aP.x|0,
+		y = thus._aP.y|0,
 		size = thus.size|0;   // `|0` is equivalent to `Math.floor(…)`
 
 		Shape.draw.call(thus);   // prepare drawing
 
-		context.fillRect(position.x|0, position.y|0, size, size);
+		thus._rn.context.fillRect(x, y, size, size);
 		if (thus.lineWidth > 0)
-			context.strokeRect(position.x|0, position.y|0, size, size);
+			thus._rn.context.strokeRect(x, y, size, size);
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
@@ -509,8 +497,8 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		Shape.init.call(options);    // call the super class constructor
 
 		// The list of vertex nodes the polygon exists of.
-		// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
-		this._vertices = this.vertices = new Array(options.vertices);
+		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` uses `_v` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+		this._v = this.vertices = new Array(options.vertices);
 
 		return this;   // method chaining
 	},
@@ -521,15 +509,15 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 	draw: function () {
 		// proxies
 		var thus = this,
-		context = thus._root.context,
-		vertices = thus._vertices;
+		context = thus._rn.context,
+		vertex, i, length;
 
 		// prepare drawing
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		for (var vertex, i = 0, length = vertices.length; i < length; i++) {
-			vertex = thus._absolute(vertices[i], thus._absPosition, thus._absRotation);
+		for (i = 0, length = thus._v.length; i < length; i++) {
+			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
 			context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
 		}
 
@@ -538,6 +526,9 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		context.fill();
 		if (thus.lineWidth > 0)
 			context.stroke();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
@@ -566,10 +557,10 @@ var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 
 		Polygon.init.call(this, options);
 
-		// The rectangle's width. Pretty obvious.
-		this._width = options.width !== null ? options.width : 60;
-		// The rectangle's height. Pretty obvious.
-		this._height = options.height !== null ? options.height : 40;
+		// The rectangle's width.
+		this._w = options.width !== null ? options.width : 60;
+		// The rectangle's height.
+		this._h = options.height !== null ? options.height : 40;
 
 		// `Polygon` exposes `vertices`, an alias to `_vertices`, intended to be a straightforward way to manipulate the path. However, because `Rectangle` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Rectangle`, leaving only the `_vertices` intended for private use.
 		delete this.vertices;
@@ -579,42 +570,43 @@ var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 
 
 
-	// Getter Setter: If a `width` is given, change it on this `Rectangle` and call `_update()` to recalculate the `vertices` array. Otherwise return the current `_width`.
+	// Getter Setter: If a `width` is given, change it on this `Rectangle` and call `_u()` to recalculate the `vertices` array. Otherwise return the current `_w`.
 	width: function (width) {
 		if (width !== null) {
-			this._width = width;
-			this._update();
+			this._w = width;
+			this._u();
 			return this;   // method chaining
 		} else
-			return this._width;   // method chaining
+			return this._w;   // method chaining
 	},
 
 
 
-	// Getter Setter: If a `height` is given, change it on this `Rectangle` and call `_update()` to recalculate the `vertices` array. Otherwise return the current `_height`.
+	// Getter Setter: If a `height` is given, change it on this `Rectangle` and call `_u()` to recalculate the `vertices` array. Otherwise return the current `_h`.
 	height: function (height) {
 		if (height !== null) {
-			this._height = height;
-			this._update();
+			this._h = height;
+			this._u();
 			return this;   // method chaining
 		} else
-			return this._height;   // method chaining
+			return this._h;   // method chaining
 	},
 
 
 
 	// Recalculate the `vertices` array.
-	_update: function () {
+	_u: function () {
 		var thus = this;   // alias for shorter code
 
-		thus._vertices = [
-			new Vector(0, 0),
-			new Vector(thus.width, 0),
-			new Vector(thus.width, thus.height),
-			new Vector(0, thus.height)
+		thus._v = [
+			v(0, 0),
+			v(thus._w, 0),
+			v(thus._w, thus._h),
+			v(0, thus._h)
 		];
 
-		Node._update.call(thus);   // let `Node._update` call the children.
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
@@ -657,13 +649,13 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 	draw: function () {
 		// aliases for shorter code
 		var thus = this,
-		context = thus._root.context;
+		context = thus._rn.context;
 
 		// Prepare drawing.
 		context.save();
 		Shape.draw.call(thus);
-		context.translate(thus._absPosition|0);
-		context.rotate(thus._absRotation);
+		context.translate(thus._aP.x|0, thus._aP.y|0);
+		context.rotate(thus._aR);
 		context.scale(1, thus.height / thus.width);   // todo: Use `|0` here?
 		context.beginPath();
 
@@ -675,6 +667,9 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 		context.restore();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
@@ -714,17 +709,19 @@ var Square = exports.Square = extend(inherit(Polygon), {
 
 
 	// Recompose the `vertices` list.
-	_update: function () {
-		var thus = this;    // alias for shorter code
+	_u: function () {
+		var thus = this,
+		size = thus.size;
 
-		thus._vertices = [
-			exports.v(0, 0),
-			exports.v(thus.size, 0),
-			exports.v(thus.size, thus.size),
-			exports.v(0, thus.size)
+		thus._v = [
+			v(0, 0),
+			v(size, 0),
+			v(size, size),
+			v(0, size)
 		];
 
-		Node._update.call(this);    // Update the rest.
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
@@ -751,7 +748,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 	init: function (options) {
 		options = options || {};
 
-			Shape.init.call(this, options);
+		Shape.init.call(this, options);
 
 		// The circle's radius. Pretty obvious.
 		this.radius = options.radius !== null ? options.radius : 50;
@@ -764,12 +761,13 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 	draw: function () {
 		// aliases for shorter code
 		var thus = this,
-		context = thus._root.context;
+		context = thus._rn.context;
 
 		// Prepare drawing.
 		Shape.draw.call(thus);
 		context.beginPath();
 
+		context.moveTo(thus._aP.x|0, thus._aP.y|0);
 		context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 		// Finish drawing.
@@ -777,6 +775,9 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		context.fill();
 		if (thus.lineWidth > 0)
 			context.stroke();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 

@@ -18,12 +18,12 @@ var Vector = exports.Vector = {
 
 	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
 	add: function (x, y) {
-		if (y !== null) {   // assuming two raw values
+		if (arguments.length >= 2) {   // assuming two raw values
 			this.x += x;
 			this.y += y;
-		} else if (x !== null) {   // assuming one `Vector` object
+		} else if (arguments.length === 1 && arguments[0]) {   // assuming one `Vector` object
 			this.x += x.x;
-			this.y += y.y;
+			this.y += x.y;
 		}
 
 		return this;   // method chaining
@@ -33,8 +33,8 @@ var Vector = exports.Vector = {
 
 	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
 	rotate: function (angle) {
-		this.x = Math.cos(angle) * x;
-		this.y = Math.sin(angle) * y;
+		this.x = Math.cos(angle) * this.x;
+		this.y = Math.sin(angle) * this.y;
 
 		return this;   // method chaining
 	},

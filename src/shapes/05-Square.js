@@ -23,17 +23,19 @@ var Square = exports.Square = extend(inherit(Polygon), {
 
 
 	// Recompose the `vertices` list.
-	_update: function () {
-		var thus = this;    // alias for shorter code
+	_u: function () {
+		var thus = this,
+		size = thus.size;
 
-		thus._vertices = [
-			exports.v(0, 0),
-			exports.v(thus.size, 0),
-			exports.v(thus.size, thus.size),
-			exports.v(0, thus.size)
+		thus._v = [
+			v(0, 0),
+			v(size, 0),
+			v(size, size),
+			v(0, size)
 		];
 
-		Node._update.call(this);    // Update the rest.
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 

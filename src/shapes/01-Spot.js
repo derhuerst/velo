@@ -22,17 +22,19 @@ var Spot = exports.Spot = extend(inherit(Shape), {
 
 	// Draw a little dot to the canvas.
 	draw: function () {
-		// proxies
 		var thus = this,
-		context = thus._root.context,
-		position = thus._absPosition,
+		x = thus._aP.x|0,
+		y = thus._aP.y|0,
 		size = thus.size|0;   // `|0` is equivalent to `Math.floor(…)`
 
 		Shape.draw.call(thus);   // prepare drawing
 
-		context.fillRect(position.x|0, position.y|0, size, size);
+		thus._rn.context.fillRect(x, y, size, size);
 		if (thus.lineWidth > 0)
-			context.strokeRect(position.x|0, position.y|0, size, size);
+			thus._rn.context.strokeRect(x, y, size, size);
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 

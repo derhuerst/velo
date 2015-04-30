@@ -10,8 +10,8 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 	init: function (element) {
 		Node.init.call(this);
 
-		// A user might want to access the `_root` property, even if this is the root node.
-		this._root = this;
+		// A user might want to access the `_rn` property, even if this is the root node.
+		this._rn = this;
 
 		// The canvas DOM node (`HTMLCanvasElement`).
 		if (!element)
@@ -27,7 +27,7 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 
 	// Clear the canvas.
 	clear: function () {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.clearRect(0, 0, this.element.width, this.element.height);
 	},
 
 

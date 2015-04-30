@@ -13,8 +13,8 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		Shape.init.call(options);    // call the super class constructor
 
 		// The list of vertex nodes the polygon exists of.
-		// User might want to access the list of vertex, which is why `_vertices` is aliased as `vertices`. `draw` uses `_vertices` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
-		this._vertices = this.vertices = new Array(options.vertices);
+		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` uses `_v` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+		this._v = this.vertices = new Array(options.vertices);
 
 		return this;   // method chaining
 	},
@@ -25,15 +25,15 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 	draw: function () {
 		// proxies
 		var thus = this,
-		context = thus._root.context,
-		vertices = thus._vertices;
+		context = thus._rn.context,
+		vertex, i, length;
 
 		// prepare drawing
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		for (var vertex, i = 0, length = vertices.length; i < length; i++) {
-			vertex = thus._absolute(vertices[i], thus._absPosition, thus._absRotation);
+		for (i = 0, length = thus._v.length; i < length; i++) {
+			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
 			context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
 		}
 
@@ -42,6 +42,9 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		context.fill();
 		if (thus.lineWidth > 0)
 			context.stroke();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 

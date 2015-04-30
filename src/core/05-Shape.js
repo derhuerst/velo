@@ -25,7 +25,7 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 	// Prepare drawing the shape by changing the colors of the canvas rendering context.
 	draw: function () {
-		var context = this._root.context;   // proxy
+		var context = this._rn.context;   // proxy
 
 		context.fillStyle = this.fillColor;
 		context.strokeStyle = this.strokeColor;

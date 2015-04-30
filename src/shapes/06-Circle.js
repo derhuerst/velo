@@ -10,7 +10,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 	init: function (options) {
 		options = options || {};
 
-			Shape.init.call(this, options);
+		Shape.init.call(this, options);
 
 		// The circle's radius. Pretty obvious.
 		this.radius = options.radius !== null ? options.radius : 50;
@@ -23,12 +23,13 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 	draw: function () {
 		// aliases for shorter code
 		var thus = this,
-		context = thus._root.context;
+		context = thus._rn.context;
 
 		// Prepare drawing.
 		Shape.draw.call(thus);
 		context.beginPath();
 
+		context.moveTo(thus._aP.x|0, thus._aP.y|0);
 		context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 		// Finish drawing.
@@ -36,6 +37,9 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		context.fill();
 		if (thus.lineWidth > 0)
 			context.stroke();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 

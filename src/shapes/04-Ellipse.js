@@ -26,13 +26,13 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 	draw: function () {
 		// aliases for shorter code
 		var thus = this,
-		context = thus._root.context;
+		context = thus._rn.context;
 
 		// Prepare drawing.
 		context.save();
 		Shape.draw.call(thus);
-		context.translate(thus._absPosition|0);
-		context.rotate(thus._absRotation);
+		context.translate(thus._aP.x|0, thus._aP.y|0);
+		context.rotate(thus._aR);
 		context.scale(1, thus.height / thus.width);   // todo: Use `|0` here?
 		context.beginPath();
 
@@ -44,6 +44,9 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 		context.restore();
+
+		// call `_u()` on all child nodes
+		array.foreach(this.children, '_u');
 	}
 
 
