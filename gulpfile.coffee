@@ -18,7 +18,7 @@ uglify		= require 'gulp-uglify'
 
 gzip		= require 'gulp-gzip'
 
-rimraf		= require 'gulp-rimraf'
+del			= require 'del'
 
 
 # package metadata
@@ -92,9 +92,8 @@ gulp.task 'gzip', ['minify'], () ->
 
 
 
-gulp.task 'cleanup', ['build'], () ->
-	return gulp.src "./src/#{pkg.name}.js", read:false
-	.pipe rimraf()
+gulp.task 'cleanup', ['build'], (cb) ->
+	del "./src/#{pkg.name}.js", cb
 
 
 
