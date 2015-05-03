@@ -25,6 +25,11 @@ var inherit = exports.inherit = Object.create;
 
 
 
+// Just a proxy for shorter code.
+var round = Math.round;
+
+
+
 // Extend the `target` object by the keys and values of the `source` object.
 // Stolen from the zepto.js project (https://github.com/madrobby/zepto/blob/1d94d92223a5ec2edf1fbe18a7a9cc717e7663e4/src/zepto.js#L223) and customized.
 var extend = function (target, source) {
@@ -115,16 +120,15 @@ var Vector = exports.Vector = {
 
 
 
-	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values, assuming the vector a current rotation of `0`.
-	// todo: add an additional argument for the current rotation?
+	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
 	rotate: function (angle) {
 		if (angle !== 0){
 			// proxies
 			var x = this.x;
 			var y = this.y;
-			var hypotenuse = Math.sqrt(x * x + y * y);
-			this.x = Math.cos(angle) * hypotenuse;
-			this.y = Math.sin(angle) * hypotenuse;
+
+			this.x = x * Math.cos(angle) - y * Math.sin(angle);
+			this.y = x * Math.sin(angle) + y * Math.cos(angle);
 		}
 
 		return this;   // method chaining
@@ -475,9 +479,9 @@ var Spot = exports.Spot = extend(inherit(Shape), {
 	// Draw a little dot to the canvas.
 	draw: function () {
 		var thus = this,
-		x = thus._aP.x|0,
-		y = thus._aP.y|0,
-		size = thus.size|0;   // `|0` is equivalent to `Math.floor(…)`
+		x = round(thus._aP.x),
+		y = round(thus._aP.y),
+		size = round(thus.size);
 
 		Shape.draw.call(thus);   // prepare drawing
 
@@ -524,6 +528,10 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 
 
+	// todo: cache `_v`. implement a public `update` method to recomputer the vertices' absolute positions.
+
+
+
 	// Draw the polygon to the canvas.
 	draw: function () {
 		// proxies
@@ -537,7 +545,7 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 		for (i = 0, length = thus._v.length; i < length; i++) {
 			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
-			context[i === 0 ? 'moveTo' : 'lineTo'](vertex.x|0, vertex.y|0);
+			context[i === 0 ? 'moveTo' : 'lineTo'](round(vertex.x), round(vertex.y));
 		}
 
 		// Finish drawing.
@@ -665,12 +673,12 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 		// Prepare drawing.
 		context.save();
 		Shape.draw.call(thus);
-		context.translate(thus._aP.x|0, thus._aP.y|0);
+		context.translate(round(thus._aP.x), round(thus._aP.y));
 		context.rotate(thus._aR);
-		context.scale(1, thus.height / thus.width);   // todo: Use `|0` here?
+		context.scale(1, thus.height / thus.width);   // todo: round here?
 		context.beginPath();
 
-		context.arc(0, 0, thus.width / 2|0, 0, Math.PI * 2);   // todo: Use `|0` here?
+		context.arc(0, 0, round(thus.width / 2), 0, Math.PI * 2);
 
 		// Finish drawing.
 		context.closePath();
@@ -782,7 +790,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		context.arc(thus._aP.x|0, thus._aP.y|0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		context.arc(round(thus._aP.x), round(thus._aP.y), round(thus.radius), 0, Math.PI * 2);
 
 		// Finish drawing.
 		context.closePath();

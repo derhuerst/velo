@@ -33,12 +33,12 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 		// Prepare drawing.
 		context.save();
 		Shape.draw.call(thus);
-		context.translate(thus._aP.x|0, thus._aP.y|0);
+		context.translate(round(thus._aP.x), round(thus._aP.y));
 		context.rotate(thus._aR);
-		context.scale(1, thus.height / thus.width);   // todo: Use `|0` here?
+		context.scale(1, thus.height / thus.width);   // todo: round here?
 		context.beginPath();
 
-		context.arc(0, 0, thus.width / 2|0, 0, Math.PI * 2);   // todo: Use `|0` here?
+		context.arc(0, 0, round(thus.width / 2), 0, Math.PI * 2);
 
 		// Finish drawing.
 		context.closePath();

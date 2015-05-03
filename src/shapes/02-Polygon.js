@@ -21,6 +21,10 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 
 
+	// todo: cache `_v`. implement a public `update` method to recomputer the vertices' absolute positions.
+
+
+
 	// Draw the polygon to the canvas.
 	draw: function () {
 		// proxies
@@ -34,7 +38,7 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 		for (i = 0, length = thus._v.length; i < length; i++) {
 			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
-			context[i === 0 ? 'moveTo' : 'lineTo'](vertex.x|0, vertex.y|0);
+			context[i === 0 ? 'moveTo' : 'lineTo'](round(vertex.x), round(vertex.y));
 		}
 
 		// Finish drawing.

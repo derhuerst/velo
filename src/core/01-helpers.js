@@ -18,6 +18,11 @@ var inherit = exports.inherit = Object.create;
 
 
 
+// Just a proxy for shorter code.
+var round = Math.round;
+
+
+
 // Extend the `target` object by the keys and values of the `source` object.
 // Stolen from the zepto.js project (https://github.com/madrobby/zepto/blob/1d94d92223a5ec2edf1fbe18a7a9cc717e7663e4/src/zepto.js#L223) and customized.
 var extend = function (target, source) {

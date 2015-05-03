@@ -23,9 +23,9 @@ var Spot = exports.Spot = extend(inherit(Shape), {
 	// Draw a little dot to the canvas.
 	draw: function () {
 		var thus = this,
-		x = thus._aP.x|0,
-		y = thus._aP.y|0,
-		size = thus.size|0;   // `|0` is equivalent to `Math.floor(…)`
+		x = round(thus._aP.x),
+		y = round(thus._aP.y),
+		size = round(thus.size);
 
 		Shape.draw.call(thus);   // prepare drawing
 

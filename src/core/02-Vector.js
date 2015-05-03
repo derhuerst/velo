@@ -40,16 +40,15 @@ var Vector = exports.Vector = {
 
 
 
-	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values, assuming the vector a current rotation of `0`.
-	// todo: add an additional argument for the current rotation?
+	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
 	rotate: function (angle) {
 		if (angle !== 0){
 			// proxies
 			var x = this.x;
 			var y = this.y;
-			var hypotenuse = Math.sqrt(x * x + y * y);
-			this.x = Math.cos(angle) * hypotenuse;
-			this.y = Math.sin(angle) * hypotenuse;
+
+			this.x = x * Math.cos(angle) - y * Math.sin(angle);
+			this.y = x * Math.sin(angle) + y * Math.cos(angle);
 		}
 
 		return this;   // method chaining

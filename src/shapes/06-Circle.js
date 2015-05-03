@@ -31,7 +31,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		context.arc(thus._aP.x|0, thus._aP.y|0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		context.arc(round(thus._aP.x), round(thus._aP.y), round(thus.radius), 0, Math.PI * 2);
 
 		// Finish drawing.
 		context.closePath();
