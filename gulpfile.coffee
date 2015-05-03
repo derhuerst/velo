@@ -29,16 +29,13 @@ cfg = pkg.config
 
 
 gulp.task 'concat', () ->
-	glob = []
-	for file in cfg.files or ['01-core/*', '02-shapes/*', '02-util/*']
-		gutil.log 'using', gutil.colors.green(file)
-		glob.push path.join 'src', "#{file}.js"
-	for file in cfg.ignore or []
-		gutil.log 'ignoring', gutil.colors.red(file)
-		glob.push '!' + path.join 'src', "#{file}.js"
+	globs = []
+	for glob in cfg.globs or ['core/*', 'shapes/*', 'util/*']
+		gutil.log 'using module', gutil.colors.green glob
+		globs.push path.join 'src', "#{glob}.js"
 
-	return gulp.src glob
-	.pipe concat "#{pkg.name}.js", newLine: '\n\n'
+	return gulp.src globs
+	.pipe concat "#{pkg.name}.js", newLine: '\n\n\n\n'
 	.pipe gulp.dest './src'
 
 
