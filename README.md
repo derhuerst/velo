@@ -26,7 +26,7 @@ npm install --dev
 
 *velo* is divided into modules, each being a directory containing JavaScript files. These are the modules available.
 
-|directory|default|modules|
+|Module|Default|Files|
 |:--:|:--:|:--|
 |[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/04-Node.js), [`Canvas`](src/core/05-Canvas.js), [`Shape`](src/core/06-Shape.js)|
 |[shapes](src/shapes)|✔|[`Spot`](src/shapes/01-Spot.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js), [`Square`](src/shapes/05-Square.js), [`Circle`](src/shapes/06-Circle.js)|
