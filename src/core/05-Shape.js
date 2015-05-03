@@ -9,17 +9,18 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
-		Node.init.call(this, options);
+		Node.init.call(thus, options);
 
-		// The color the shape will be filled with. Can be any valid CSS color.
-		this.fillColor = options.fillColor || 'gray';
-		// The color the shape will be bordered with. Can be any valid CSS color.
-		this.strokeColor = options.strokeColor || 'black';
-		// The width of the border.
-		this.lineWidth = options.lineWidth !== null ? options.lineWidth : 1;
+		// The color the shape will be filled with. Can be any valid CSS color. Default is `gray`.
+		thus.fillColor = options.fillColor || 'gray';
+		// The color the shape will be bordered with. Can be any valid CSS color. Default is `black`.
+		thus.strokeColor = options.strokeColor || 'black';
+		// The width of the border. Default is `0`.
+		thus.lineWidth = options.lineWidth !== null ? options.lineWidth : 0;
 
-		return this;   // method chaining
+		return thus;   // method chaining
 	},
 
 

@@ -10,10 +10,10 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 	init: function (options) {
 		options = options || {};
 
-		Shape.init.call(options);    // call the super class constructor
+		Shape.init.call(this, options);    // call the super class constructor
 
 		// The list of vertex nodes the polygon exists of.
-		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` uses `_v` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` internally uses `_v`.
 		this._v = this.vertices = new Array(options.vertices);
 
 		return this;   // method chaining
@@ -34,7 +34,7 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 		for (i = 0, length = thus._v.length; i < length; i++) {
 			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
-			context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
+			context[i === 0 ? 'moveTo' : 'lineTo'](vertex.x|0, vertex.y|0);
 		}
 
 		// Finish drawing.
@@ -43,8 +43,8 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 

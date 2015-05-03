@@ -40,7 +40,7 @@ var extend = function (target, source) {
 // `Array` helpers
 var array = exports.array = {
 
-	// Add `item` to the array `arr` if it isn't alerady stored.
+	// Add `item` to the array `arr` if it isn't stored yet.
 	add: function (arr, item) {
 		if (!array.has(arr, item))
 			arr.push(item);
@@ -91,6 +91,15 @@ var Vector = exports.Vector = {
 
 
 
+	// Set `x` and `y` to `0`.
+	reset: function () {
+		this.x = this.y = 0;
+
+		return this;   // method chaining
+	},
+
+
+
 	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
 	add: function (x, y) {
 		if (arguments.length >= 2) {   // assuming two raw values
@@ -106,10 +115,17 @@ var Vector = exports.Vector = {
 
 
 
-	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
+	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values, assuming the vector a current rotation of `0`.
+	// todo: add an additional argument for the current rotation?
 	rotate: function (angle) {
-		this.x = Math.cos(angle) * this.x;
-		this.y = Math.sin(angle) * this.y;
+		if (angle !== 0){
+			// proxies
+			var x = this.x;
+			var y = this.y;
+			var hypotenuse = Math.sqrt(x * x + y * y);
+			this.x = Math.cos(angle) * hypotenuse;
+			this.y = Math.sin(angle) * hypotenuse;
+		}
 
 		return this;   // method chaining
 	},
@@ -154,21 +170,22 @@ var Node = exports.Node = {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
 		// The parent `Node` object. Default: `null`
-		this.parent(options.parent);
+		thus.parent(options.parent);
 		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
-		this._p = options.position || v();
+		thus._p = options.position || v();
 		// The rotation in radians (relative to the node's parent). Default: `0`
-		this._r = options.rotation || 0;
+		thus._r = options.rotation || 0;
 		// The list of child nodes.
-		this.children = new Array(options.children || 0);
+		thus.children = new Array(options.children || 0);
 
-		this._aR = 0;   // cached absolute rotation
-		this._aR = 0;   // cached absolute rotation
-		this._u();   // recompute the absolute values
+		thus._aP = v(0, 0);   // cached absolute position
+		thus._aR = 0;   // cached absolute rotation
+		thus._u();   // recompute the absolute values
 
-		return this;   // method chaining
+		return thus;   // method chaining
 	},
 
 
@@ -221,7 +238,7 @@ var Node = exports.Node = {
 	// Recompute the node's absolute values and store them in `_aP` and `_aR`, then call `_u()` on all children.
 	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
 	_u: function () {
-		var thus = this;   // just an proxy
+		var thus = this;   // just a proxy
 
 		if (!thus._pn || !thus._p) return;
 
@@ -229,8 +246,8 @@ var Node = exports.Node = {
 		thus._aR = thus._pn._aR + thus._r;
 
 		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
-	},
+		array.foreach(thus.children, '_u');
+	}
 
 
 
@@ -263,7 +280,7 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 		if (!element)
 			throw new Error('No HTMLCanvasElement given.');
 		this.element = element;
-		// The rendering context (`RenderingContext2d`).
+		// The rendering context (`CanvasRenderingContext2d`).
 		this.context = element.getContext('2d');
 
 		return this;   // method chaining
@@ -306,17 +323,18 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
-		Node.init.call(this, options);
+		Node.init.call(thus, options);
 
-		// The color the shape will be filled with. Can be any valid CSS color.
-		this.fillColor = options.fillColor || 'gray';
-		// The color the shape will be bordered with. Can be any valid CSS color.
-		this.strokeColor = options.strokeColor || 'black';
-		// The width of the border.
-		this.lineWidth = options.lineWidth !== null ? options.lineWidth : 1;
+		// The color the shape will be filled with. Can be any valid CSS color. Default is `gray`.
+		thus.fillColor = options.fillColor || 'gray';
+		// The color the shape will be bordered with. Can be any valid CSS color. Default is `black`.
+		thus.strokeColor = options.strokeColor || 'black';
+		// The width of the border. Default is `0`.
+		thus.lineWidth = options.lineWidth !== null ? options.lineWidth : 0;
 
-		return this;   // method chaining
+		return thus;   // method chaining
 	},
 
 
@@ -345,14 +363,14 @@ var c = exports.c = function (element) {
 
 
 
-// todo: description
+// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
 var RenderingInterval = exports.RenderingInterval = {
 
 
 
 	init: function (callback) {
 		this.callback = callback || noop;
-		this.stop();
+		this.running = false;
 
 		return this;   // method chaining
 	},
@@ -362,21 +380,22 @@ var RenderingInterval = exports.RenderingInterval = {
 	start: function () {
 		this.running = true;
 		this._queue();
-		return this;
+
+		return this;   // method chaining
 	},
 
 
 
 	stop: function () {
 		this.running = false;
-		return this;
+
+		return this;   // method chaining
 	},
 
 
 
 	_call: function () {
-		if(!this.running)
-			return;
+		if(!this.running) return;
 		this.callback();
 		this._queue();
 	},
@@ -402,13 +421,13 @@ var ri = exports.ri = function (callback) {
 
 
 
-// todo: description
+// A helper for calling `callback` every `interval` milliseconds.
 var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 
 
 	init: function (callback, interval) {
-		RenderingInterval.call(this, callback);
+		RenderingInterval.init.call(this, callback);
 
 		this.interval = interval;
 	},
@@ -494,10 +513,10 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 	init: function (options) {
 		options = options || {};
 
-		Shape.init.call(options);    // call the super class constructor
+		Shape.init.call(this, options);    // call the super class constructor
 
 		// The list of vertex nodes the polygon exists of.
-		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` uses `_v` to play nice with `Rectangle` and `Square` (both inheriting from `Polygon`).
+		// User might want to access the list of vertex, which is why `_v` is aliased as `vertices`. `draw` internally uses `_v`.
 		this._v = this.vertices = new Array(options.vertices);
 
 		return this;   // method chaining
@@ -518,7 +537,7 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 
 		for (i = 0, length = thus._v.length; i < length; i++) {
 			vertex = thus._v[i].clone().rotate(thus._aR).add(thus._aP);
-			context[i === 0 ? 'moveto' : 'lineTo'](vertex.x|0, vertex.y|0);
+			context[i === 0 ? 'moveTo' : 'lineTo'](vertex.x|0, vertex.y|0);
 		}
 
 		// Finish drawing.
@@ -527,8 +546,8 @@ var Polygon = exports.Polygon = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 
@@ -554,50 +573,17 @@ var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
-		Polygon.init.call(this, options);
+		Polygon.init.call(thus, options);
 
 		// The rectangle's width.
-		this._w = options.width !== null ? options.width : 60;
+		thus._w = options.width !== null ? options.width : 60;
 		// The rectangle's height.
-		this._h = options.height !== null ? options.height : 40;
+		thus._h = options.height !== null ? options.height : 40;
 
-		// `Polygon` exposes `vertices`, an alias to `_vertices`, intended to be a straightforward way to manipulate the path. However, because `Rectangle` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Rectangle`, leaving only the `_vertices` intended for private use.
-		delete this.vertices;
-
-		return this;   // method chaining
-	},
-
-
-
-	// Getter Setter: If a `width` is given, change it on this `Rectangle` and call `_u()` to recalculate the `vertices` array. Otherwise return the current `_w`.
-	width: function (width) {
-		if (width !== null) {
-			this._w = width;
-			this._u();
-			return this;   // method chaining
-		} else
-			return this._w;   // method chaining
-	},
-
-
-
-	// Getter Setter: If a `height` is given, change it on this `Rectangle` and call `_u()` to recalculate the `vertices` array. Otherwise return the current `_h`.
-	height: function (height) {
-		if (height !== null) {
-			this._h = height;
-			this._u();
-			return this;   // method chaining
-		} else
-			return this._h;   // method chaining
-	},
-
-
-
-	// Recalculate the `vertices` array.
-	_u: function () {
-		var thus = this;   // alias for shorter code
-
+		// `Polygon` exposes `vertices`, an alias to `_v`, intended to be a straightforward way to manipulate the path. However, because `Rectangle` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Rectangle`, leaving only the `_v` intended for private use.
+		delete thus.vertices;
 		thus._v = [
 			v(0, 0),
 			v(thus._w, 0),
@@ -605,8 +591,31 @@ var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 			v(0, thus._h)
 		];
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		return thus;   // method chaining
+	},
+
+
+
+	// Getter Setter: If a `width` is given, set `_w` and modify the `vertices` array accordingly. Otherwise return the current `_w`.
+	width: function (width) {
+		if (width !== null) {
+			this._w = width;
+			this._v[1].x = this._v[2].x = this._w;
+			return this;   // method chaining
+		} else
+			return this._w;
+	},
+
+
+
+	// Getter Setter: If a `height` is given, set `_h` and modify the `vertices` array accordingly. Otherwise return the current `_h`.
+	height: function (height) {
+		if (height !== null) {
+			this._h = height;
+			this._v[2].y = this._v[3].y = this._h;
+			return this;   // method chaining
+		} else
+			return this._h;
 	}
 
 
@@ -647,6 +656,8 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 
 	// Draw the ellipse to the canvas.
 	draw: function () {
+		Shape.draw.call(this);
+
 		// aliases for shorter code
 		var thus = this,
 		context = thus._rn.context;
@@ -668,8 +679,8 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 			context.stroke();
 		context.restore();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 
@@ -695,33 +706,35 @@ var Square = exports.Square = extend(inherit(Polygon), {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
-		Polygon.init.call(this, options);
+		Polygon.init.call(thus, options);
 
-		// The square's width and height. Pretty obvious.
-		this.size = options.size !== null ? options.size : 2;
+		// The square's width and height. Default is `2`.
+		thus._s = options.size !== null ? options.size : 2;
 
-		// `Polygon` exposes `vertices`, an alias to `_vertices`, intended to be a straightforward way to manipulate the path. However, because `Square` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Square`, leaving only the `_vertices` intended for private use.
-		delete this.vertices;
+		// `Polygon` exposes `vertices`, an alias to `_v`, intended to be a straightforward way to manipulate the path. However, because `Square` changes this path *by itself* (according to its position and rotation), `vertices` is removed by `Square`, leaving only the `_v` intended for private use.
+		delete thus.vertices;
+		thus._v = [
+			v(0, 0),
+			v(thus._s, 0),
+			v(thus._s, thus._s),
+			v(0, thus._s)
+		];
 
-		return this;   // method chaining
+		return thus;   // method chaining
 	},
 
 
-	// Recompose the `vertices` list.
-	_u: function () {
-		var thus = this,
-		size = thus.size;
 
-		thus._v = [
-			v(0, 0),
-			v(size, 0),
-			v(size, size),
-			v(0, size)
-		];
-
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+	// Getter Setter: If a `size` is given, set `_s` and modify the `vertices` array accordingly. Otherwise return the current `_s`.
+	size: function (size) {
+		if (size !== null) {
+			this._w = size;
+			this._v[1].x = this._v[2].x = this._v[2].y = this._v[3].y = this._s;
+			return this;   // method chaining
+		} else
+			return this._w;
 	}
 
 
@@ -759,6 +772,8 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 
 	// Draw the circle to the canvas.
 	draw: function () {
+		Shape.draw.call(this);
+
 		// aliases for shorter code
 		var thus = this,
 		context = thus._rn.context;
@@ -767,8 +782,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		context.moveTo(thus._aP.x|0, thus._aP.y|0);
-		context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		context.arc(thus._aP.x|0, thus._aP.y|0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 		// Finish drawing.
 		context.closePath();
@@ -776,8 +790,8 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 

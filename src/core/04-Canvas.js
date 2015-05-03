@@ -17,7 +17,7 @@ var Canvas = exports.Canvas = extend(inherit(Node), {
 		if (!element)
 			throw new Error('No HTMLCanvasElement given.');
 		this.element = element;
-		// The rendering context (`RenderingContext2d`).
+		// The rendering context (`CanvasRenderingContext2d`).
 		this.context = element.getContext('2d');
 
 		return this;   // method chaining

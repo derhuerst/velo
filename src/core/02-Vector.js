@@ -16,6 +16,15 @@ var Vector = exports.Vector = {
 
 
 
+	// Set `x` and `y` to `0`.
+	reset: function () {
+		this.x = this.y = 0;
+
+		return this;   // method chaining
+	},
+
+
+
 	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
 	add: function (x, y) {
 		if (arguments.length >= 2) {   // assuming two raw values
@@ -31,10 +40,17 @@ var Vector = exports.Vector = {
 
 
 
-	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values.
+	// Apply a rotation of `angle` around `(0|0)` to the `x` and `y` values, assuming the vector a current rotation of `0`.
+	// todo: add an additional argument for the current rotation?
 	rotate: function (angle) {
-		this.x = Math.cos(angle) * this.x;
-		this.y = Math.sin(angle) * this.y;
+		if (angle !== 0){
+			// proxies
+			var x = this.x;
+			var y = this.y;
+			var hypotenuse = Math.sqrt(x * x + y * y);
+			this.x = Math.cos(angle) * hypotenuse;
+			this.y = Math.sin(angle) * hypotenuse;
+		}
 
 		return this;   // method chaining
 	},

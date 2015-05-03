@@ -2,13 +2,13 @@
 
 
 
-// todo: description
+// A helper for calling `callback` every `interval` milliseconds.
 var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 
 
 	init: function (callback, interval) {
-		RenderingInterval.call(this, callback);
+		RenderingInterval.init.call(this, callback);
 
 		this.interval = interval;
 	},

@@ -9,21 +9,22 @@ var Node = exports.Node = {
 
 	init: function (options) {
 		options = options || {};
+		var thus = this;   // proxy
 
 		// The parent `Node` object. Default: `null`
-		this.parent(options.parent);
+		thus.parent(options.parent);
 		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
-		this._p = options.position || v();
+		thus._p = options.position || v();
 		// The rotation in radians (relative to the node's parent). Default: `0`
-		this._r = options.rotation || 0;
+		thus._r = options.rotation || 0;
 		// The list of child nodes.
-		this.children = new Array(options.children || 0);
+		thus.children = new Array(options.children || 0);
 
-		this._aR = 0;   // cached absolute rotation
-		this._aR = 0;   // cached absolute rotation
-		this._u();   // recompute the absolute values
+		thus._aP = v(0, 0);   // cached absolute position
+		thus._aR = 0;   // cached absolute rotation
+		thus._u();   // recompute the absolute values
 
-		return this;   // method chaining
+		return thus;   // method chaining
 	},
 
 
@@ -76,7 +77,7 @@ var Node = exports.Node = {
 	// Recompute the node's absolute values and store them in `_aP` and `_aR`, then call `_u()` on all children.
 	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
 	_u: function () {
-		var thus = this;   // just an proxy
+		var thus = this;   // just a proxy
 
 		if (!thus._pn || !thus._p) return;
 
@@ -84,8 +85,8 @@ var Node = exports.Node = {
 		thus._aR = thus._pn._aR + thus._r;
 
 		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
-	},
+		array.foreach(thus.children, '_u');
+	}
 
 
 

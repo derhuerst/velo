@@ -21,6 +21,8 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 
 	// Draw the circle to the canvas.
 	draw: function () {
+		Shape.draw.call(this);
+
 		// aliases for shorter code
 		var thus = this,
 		context = thus._rn.context;
@@ -29,8 +31,7 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		Shape.draw.call(thus);
 		context.beginPath();
 
-		context.moveTo(thus._aP.x|0, thus._aP.y|0);
-		context.arc(0, 0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
+		context.arc(thus._aP.x|0, thus._aP.y|0, thus.radius|0, 0, Math.PI * 2);    // todo: Use `|0` here?
 
 		// Finish drawing.
 		context.closePath();
@@ -38,8 +39,8 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 		if (thus.lineWidth > 0)
 			context.stroke();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 

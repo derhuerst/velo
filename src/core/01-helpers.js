@@ -33,7 +33,7 @@ var extend = function (target, source) {
 // `Array` helpers
 var array = exports.array = {
 
-	// Add `item` to the array `arr` if it isn't alerady stored.
+	// Add `item` to the array `arr` if it isn't stored yet.
 	add: function (arr, item) {
 		if (!array.has(arr, item))
 			arr.push(item);

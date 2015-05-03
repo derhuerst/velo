@@ -24,6 +24,8 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 
 	// Draw the ellipse to the canvas.
 	draw: function () {
+		Shape.draw.call(this);
+
 		// aliases for shorter code
 		var thus = this,
 		context = thus._rn.context;
@@ -45,8 +47,8 @@ var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 			context.stroke();
 		context.restore();
 
-		// call `_u()` on all child nodes
-		array.foreach(this.children, '_u');
+		// call `draw()` on all child nodes
+		array.foreach(this.children, 'draw');
 	}
 
 

@@ -2,14 +2,14 @@
 
 
 
-// todo: description
+// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
 var RenderingInterval = exports.RenderingInterval = {
 
 
 
 	init: function (callback) {
 		this.callback = callback || noop;
-		this.stop();
+		this.running = false;
 
 		return this;   // method chaining
 	},
@@ -19,21 +19,22 @@ var RenderingInterval = exports.RenderingInterval = {
 	start: function () {
 		this.running = true;
 		this._queue();
-		return this;
+
+		return this;   // method chaining
 	},
 
 
 
 	stop: function () {
 		this.running = false;
-		return this;
+
+		return this;   // method chaining
 	},
 
 
 
 	_call: function () {
-		if(!this.running)
-			return;
+		if(!this.running) return;
 		this.callback();
 		this._queue();
 	},
