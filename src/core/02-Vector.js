@@ -1,7 +1,3 @@
-// core/Vector
-
-
-
 // `Vector` represents a 2D vector. It can be used as a position or translation.
 var Vector = exports.Vector = {
 

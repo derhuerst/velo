@@ -1,7 +1,3 @@
-// shapes/Spot
-
-
-
 // `Spot` is a point in the visual sense: It is rendered as a small colored circle.
 var Spot = exports.Spot = extend(inherit(Shape), {
 

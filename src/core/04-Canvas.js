@@ -1,7 +1,3 @@
-// core/Canvas
-
-
-
 // `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
 var Canvas = exports.Canvas = extend(inherit(Node), {
 

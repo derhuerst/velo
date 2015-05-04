@@ -1,7 +1,3 @@
-// shapes/Polygon
-
-
-
 // A `Polygon` is a `Shape` bounded by a list of vertix nodes.
 var Polygon = exports.Polygon = extend(inherit(Shape), {
 

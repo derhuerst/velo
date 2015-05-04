@@ -1,7 +1,3 @@
-// 02-util/02-Interval
-
-
-
 // A helper for calling `callback` every `interval` milliseconds.
 var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 

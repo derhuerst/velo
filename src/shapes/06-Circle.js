@@ -1,7 +1,3 @@
-// shapes/Circle
-
-
-
 // Yeah, a `Circle` is a circle, drawn around its `position`.
 var Circle = exports.Circle = extend(inherit(Shape), {
 

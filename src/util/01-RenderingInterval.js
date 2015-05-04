@@ -1,7 +1,3 @@
-// 02-util/01-RenderingInterval
-
-
-
 // A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
 var RenderingInterval = exports.RenderingInterval = {
 

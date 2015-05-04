@@ -1,7 +1,3 @@
-// shapes/Square
-
-
-
 // Yeah, a `Square` is a square.
 var Square = exports.Square = extend(inherit(Polygon), {
 

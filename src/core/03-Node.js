@@ -1,7 +1,3 @@
-// core/Node
-
-
-
 // `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`.
 var Node = exports.Node = {
 

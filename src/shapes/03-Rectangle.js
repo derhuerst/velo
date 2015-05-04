@@ -1,7 +1,3 @@
-// shapes/Rectangle
-
-
-
 // Yeah, a `Reactangle` is a rectangle.
 var Rectangle = exports.Rectangle = extend(inherit(Polygon), {
 

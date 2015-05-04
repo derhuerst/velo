@@ -5,12 +5,12 @@
 
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.velo = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// core/helpers
 // `helpers` contains a collection of internal helper functions.
 
 
 
-// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more.
+// EcmaScript 5 strict mode. Because all modules get concatenated, this applies to all of them.
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more about ES5 strict mode.
 "strict mode";
 
 
@@ -20,12 +20,8 @@ var noop = exports.noop = function () {};
 
 
 
-// Just a proxy for shorter code.
+// Just proxies for shorter code.
 var inherit = exports.inherit = Object.create;
-
-
-
-// Just a proxy for shorter code.
 var round = Math.round;
 
 
@@ -77,8 +73,6 @@ var array = exports.array = {
 	}
 
 };
-
-// core/Vector
 
 
 
@@ -162,8 +156,6 @@ var v = exports.v = function (x, y) {
 	return inherit(Vector)
 	.init(x, y);
 };
-
-// core/Node
 
 
 
@@ -265,8 +257,6 @@ var n = exports.n = function (options) {
 	.init(options);
 };
 
-// core/Canvas
-
 
 
 // `Canvas` manages the canvas element and the RenderingContext2d. It is the root of the scene graph.
@@ -316,8 +306,6 @@ var c = exports.c = function (element) {
 	.init(element);
 };
 
-// shapes/Shape
-
 
 
 // `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
@@ -362,99 +350,6 @@ var c = exports.c = function (element) {
 	return inherit(Canvas)
 	.init(element);
 };
-
-// 02-util/01-RenderingInterval
-
-
-
-// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
-var RenderingInterval = exports.RenderingInterval = {
-
-
-
-	init: function (callback) {
-		this.callback = callback || noop;
-		this.running = false;
-
-		return this;   // method chaining
-	},
-
-
-
-	start: function () {
-		this.running = true;
-		this._queue();
-
-		return this;   // method chaining
-	},
-
-
-
-	stop: function () {
-		this.running = false;
-
-		return this;   // method chaining
-	},
-
-
-
-	_call: function () {
-		if(!this.running) return;
-		this.callback();
-		this._queue();
-	},
-
-
-	_queue: function () {
-		requestAnimationFrame(this._call.bind(this));
-	}
-
-
-
-};
-
-
-
-// Export a shorthand.
-var ri = exports.ri = function (callback) {
-	return inherit(RenderingInterval)
-	.init(callback);
-};
-
-// 02-util/02-Interval
-
-
-
-// A helper for calling `callback` every `interval` milliseconds.
-var Interval = exports.Interval = extend(inherit(RenderingInterval), {
-
-
-
-	init: function (callback, interval) {
-		RenderingInterval.init.call(this, callback);
-
-		this.interval = interval;
-	},
-
-
-
-	_queue: function () {
-		setTimeout(this._call.bind(this), this.interval);
-	}
-
-
-
-});
-
-
-
-// Export a shorthand.
-var i = exports.i = function (callback, interval) {
-	return inherit(Interval)
-	.init(callback, interval);
-};
-
-// shapes/Spot
 
 
 
@@ -504,8 +399,6 @@ var s = exports.s = function (options) {
 	return inherit(Spot)
 	.init(options);
 };
-
-// shapes/Polygon
 
 
 
@@ -569,8 +462,6 @@ var p = exports.p = function (options) {
 	return inherit(Polygon)
 	.init(options);
 };
-
-// shapes/Rectangle
 
 
 
@@ -638,8 +529,6 @@ var r = exports.r = function (options) {
 	.init(options);
 };
 
-// shapes/Ellipse
-
 
 
 // `Ellipse` is a ellipse, drawn around its `position`.
@@ -703,8 +592,6 @@ var e = exports.e = function (options) {
 	.init(options);
 };
 
-// shapes/Square
-
 
 
 // Yeah, a `Square` is a square.
@@ -756,8 +643,6 @@ var sq = exports.sq = function (options) {
 	return inherit(Square)
 	.init(options);
 };
-
-// shapes/Circle
 
 
 
@@ -812,6 +697,93 @@ var Circle = exports.Circle = extend(inherit(Shape), {
 var cl = exports.cl = function (options) {
 	return inherit(Circle)
 	.init(options);
+};
+
+
+
+// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
+var RenderingInterval = exports.RenderingInterval = {
+
+
+
+	init: function (callback) {
+		this.callback = callback || noop;
+		this.running = false;
+
+		return this;   // method chaining
+	},
+
+
+
+	start: function () {
+		this.running = true;
+		this._queue();
+
+		return this;   // method chaining
+	},
+
+
+
+	stop: function () {
+		this.running = false;
+
+		return this;   // method chaining
+	},
+
+
+
+	_call: function () {
+		if(!this.running) return;
+		this.callback();
+		this._queue();
+	},
+
+
+	_queue: function () {
+		requestAnimationFrame(this._call.bind(this));
+	}
+
+
+
+};
+
+
+
+// Export a shorthand.
+var ri = exports.ri = function (callback) {
+	return inherit(RenderingInterval)
+	.init(callback);
+};
+
+
+
+// A helper for calling `callback` every `interval` milliseconds.
+var Interval = exports.Interval = extend(inherit(RenderingInterval), {
+
+
+
+	init: function (callback, interval) {
+		RenderingInterval.init.call(this, callback);
+
+		this.interval = interval;
+	},
+
+
+
+	_queue: function () {
+		setTimeout(this._call.bind(this), this.interval);
+	}
+
+
+
+});
+
+
+
+// Export a shorthand.
+var i = exports.i = function (callback, interval) {
+	return inherit(Interval)
+	.init(callback, interval);
 };
 },{}]},{},[1])(1)
 });

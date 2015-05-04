@@ -1,7 +1,3 @@
-// shapes/Shape
-
-
-
 // `Shape` is a base class providing `fillColor`, `strokeColor` and `lineWidth`.
 var Shape = exports.Shape = extend(inherit(Node), {
 

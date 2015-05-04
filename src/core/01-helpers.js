@@ -1,9 +1,9 @@
-// core/helpers
 // `helpers` contains a collection of internal helper functions.
 
 
 
-// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more.
+// EcmaScript 5 strict mode. Because all modules get concatenated, this applies to all of them.
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for more about ES5 strict mode.
 "strict mode";
 
 
@@ -13,12 +13,8 @@ var noop = exports.noop = function () {};
 
 
 
-// Just a proxy for shorter code.
+// Just proxies for shorter code.
 var inherit = exports.inherit = Object.create;
-
-
-
-// Just a proxy for shorter code.
 var round = Math.round;
 
 

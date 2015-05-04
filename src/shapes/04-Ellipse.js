@@ -1,7 +1,3 @@
-// shapes/Ellipse
-
-
-
 // `Ellipse` is a ellipse, drawn around its `position`.
 var Ellipse = exports.Ellipse = extend(inherit(Shape), {
 
