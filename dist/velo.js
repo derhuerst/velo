@@ -5,7 +5,7 @@
 
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.velo = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// `helpers` contains a collection of internal helper functions.
+// `helpers` contains a collection of helper functions. They are used internally but get `export`ed as well.
 
 
 
@@ -20,8 +20,12 @@ var noop = exports.noop = function () {};
 
 
 
-// Just proxies for shorter code.
+// Proxy for `Object.create`. Create a new inherited object from another object. See https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/create and http://davidwalsh.name/javascript-objects-deconstruction#simpler-object-object for more.
 var inherit = exports.inherit = Object.create;
+
+
+
+// Proxy for `Math.round`.
 var round = Math.round;
 
 
@@ -38,7 +42,7 @@ var extend = function (target, source) {
 
 
 
-// `Array` helpers
+// `Array` helpers.
 var array = exports.array = {
 
 	// Add `item` to the array `arr` if it isn't stored yet.
@@ -81,6 +85,7 @@ var Vector = exports.Vector = {
 
 
 
+	// Initialize the vector. `x` and `y` are `0` by default.
 	init: function (x, y){
 		this.x = x || 0;
 		this.y = y || 0;
@@ -99,7 +104,7 @@ var Vector = exports.Vector = {
 
 
 
-	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
+	// Add to the vector. Either one `Vector` object or two raw values `x` and `y` can be passed.
 	add: function (x, y) {
 		if (arguments.length >= 2) {   // assuming two raw values
 			this.x += x;
@@ -130,7 +135,7 @@ var Vector = exports.Vector = {
 
 
 
-	// Check if the `x` and `y` values of this `Vector` are equal to given ones. Either one `Vector` object or two raw values can be passed.
+	// Check if this vector equals the given `Vector` object or raw values.
 	equals: function (x, y) {
 		if (y !== null)   // assuming two raw values
 			return this.x === x.x && this.y === x.y;
@@ -159,22 +164,23 @@ var v = exports.v = function (x, y) {
 
 
 
-// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`.
+// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`. Read more about how *velo* works: https://github.com/derhuerst/velo/blob/master/docs/intro.md#the-scene-graph
 var Node = exports.Node = {
 
 
 
+	// Create a new `Node` based on `options`. `options` is an object that may contain the following keys.
+	// - `parent`: The parent `Node` object. Default: `null`
+	// - `position`: The position as a `Vector` object (relative to the node's parent). Default: `velo.v()`
+	// - `rotation`: The rotation in radians (relative to the node's parent). Default: `0`
+	// - `children`: The list of child nodes. Default: `[]`
 	init: function (options) {
 		options = options || {};
 		var thus = this;   // proxy
 
-		// The parent `Node` object. Default: `null`
 		thus.parent(options.parent);
-		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
 		thus._p = options.position || v();
-		// The rotation in radians (relative to the node's parent). Default: `0`
 		thus._r = options.rotation || 0;
-		// The list of child nodes.
 		thus.children = new Array(options.children || 0);
 
 		thus._aP = v(0, 0);   // cached absolute position
@@ -186,7 +192,7 @@ var Node = exports.Node = {
 
 
 
-	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_u()` to recompute the absolute values. Otherwise return the current parent.
+	// Getter/Setter: If a `node` is given, set it as this node's parent and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current parent node.
 	parent: function (node) {
 		if (node) {
 			this._pn = node;
@@ -199,8 +205,8 @@ var Node = exports.Node = {
 
 
 
-	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_u()` to recompute the absolute values. Otherwise return the current position.
-	// If `relative` is `true`, translate the position by `vector`. Otherwise, set the position to `vector` (without making a copy!).
+	// Getter Setter: If a `vector` is given, change this node's position and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current position.
+	// If `relative` is `true`, *translate* the position by `vector`. Otherwise, *set* the position to `vector` (without making a copy!).
 	position: function (vector, relative) {
 		if (vector) {
 			if (relative === true)
@@ -215,8 +221,8 @@ var Node = exports.Node = {
 
 
 
-	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_u()` to recompute the absolute values. Otherwise return the current rotation.
-	// If `relative` is `true`, add `angle` to the current rotation. Otherwise, set the rotation to `angle`.
+	// Getter Setter: If an `angle` is given, change this node's rotation and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current rotation.
+	// If `relative` is `true`, *add* `angle` to the current rotation. Otherwise, *set* the rotation to `angle`.
 	rotation: function (angle, relative) {
 		if (angle !== null) {
 			if (relative === true)
@@ -231,8 +237,8 @@ var Node = exports.Node = {
 
 
 
-	// Recompute the node's absolute values and store them in `_aP` and `_aR`, then call `_u()` on all children.
-	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
+	// Recompute the node's absolute values (`_aP` and `_aR`), then call `_u()` on all children.
+	// Important: A node's rotation is applied *after* applying its position, so it will only affect the position of its children.
 	_u: function () {
 		var thus = this;   // just a proxy
 
@@ -263,14 +269,14 @@ var n = exports.n = function (options) {
 var Canvas = exports.Canvas = extend(inherit(Node), {
 
 
-
+	// Create a new `Vancas` using `element`. `element` must be a DOM node (`HTMLCanvasElement`).
 	init: function (element) {
 		Node.init.call(this);
 
-		// A user might want to access the `_rn` property, even if this is the root node.
+		// A user might want to use the `_rn` property, even if a `Canvas` is the root node of the scene graph. See `Node._rn`.
 		this._rn = this;
 
-		// The canvas DOM node (`HTMLCanvasElement`).
+		// The DOM node (`HTMLCanvasElement`).
 		if (!element)
 			throw new Error('No HTMLCanvasElement given.');
 		this.element = element;
@@ -342,14 +348,6 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 
 });
-
-
-
-// Export a shorthand.
-var c = exports.c = function (element) {
-	return inherit(Canvas)
-	.init(element);
-};
 
 
 

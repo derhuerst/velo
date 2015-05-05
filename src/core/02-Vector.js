@@ -3,6 +3,7 @@ var Vector = exports.Vector = {
 
 
 
+	// Initialize the vector. `x` and `y` are `0` by default.
 	init: function (x, y){
 		this.x = x || 0;
 		this.y = y || 0;
@@ -21,7 +22,7 @@ var Vector = exports.Vector = {
 
 
 
-	// Change the `x` and `y` values relatively. Either one `Vector` object or two raw values can be passed.
+	// Add to the vector. Either one `Vector` object or two raw values `x` and `y` can be passed.
 	add: function (x, y) {
 		if (arguments.length >= 2) {   // assuming two raw values
 			this.x += x;
@@ -52,7 +53,7 @@ var Vector = exports.Vector = {
 
 
 
-	// Check if the `x` and `y` values of this `Vector` are equal to given ones. Either one `Vector` object or two raw values can be passed.
+	// Check if this vector equals the given `Vector` object or raw values.
 	equals: function (x, y) {
 		if (y !== null)   // assuming two raw values
 			return this.x === x.x && this.y === x.y;

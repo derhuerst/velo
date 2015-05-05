@@ -1,19 +1,20 @@
-// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`.
+// `Node` is a base class for everything that will be rendered. Every `Node` object has a `parent`, `position`, `rotation` and can store any number of child `Node`s in `children`. Read more about how *velo* works: https://github.com/derhuerst/velo/blob/master/docs/intro.md#the-scene-graph
 var Node = exports.Node = {
 
 
 
+	// Create a new `Node` based on `options`. `options` is an object that may contain the following keys.
+	// - `parent`: The parent `Node` object. Default: `null`
+	// - `position`: The position as a `Vector` object (relative to the node's parent). Default: `velo.v()`
+	// - `rotation`: The rotation in radians (relative to the node's parent). Default: `0`
+	// - `children`: The list of child nodes. Default: `[]`
 	init: function (options) {
 		options = options || {};
 		var thus = this;   // proxy
 
-		// The parent `Node` object. Default: `null`
 		thus.parent(options.parent);
-		// The position as a `Vector` object (relative to the node's parent). Default: `new Vector()`
 		thus._p = options.position || v();
-		// The rotation in radians (relative to the node's parent). Default: `0`
 		thus._r = options.rotation || 0;
-		// The list of child nodes.
 		thus.children = new Array(options.children || 0);
 
 		thus._aP = v(0, 0);   // cached absolute position
@@ -25,7 +26,7 @@ var Node = exports.Node = {
 
 
 
-	// Getter/Setter: If a `node` is given, set it as this `Node`'s parent and call `_u()` to recompute the absolute values. Otherwise return the current parent.
+	// Getter/Setter: If a `node` is given, set it as this node's parent and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current parent node.
 	parent: function (node) {
 		if (node) {
 			this._pn = node;
@@ -38,8 +39,8 @@ var Node = exports.Node = {
 
 
 
-	// Getter Setter: If a `vector` is given, change this `Node`'s position and call `_u()` to recompute the absolute values. Otherwise return the current position.
-	// If `relative` is `true`, translate the position by `vector`. Otherwise, set the position to `vector` (without making a copy!).
+	// Getter Setter: If a `vector` is given, change this node's position and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current position.
+	// If `relative` is `true`, *translate* the position by `vector`. Otherwise, *set* the position to `vector` (without making a copy!).
 	position: function (vector, relative) {
 		if (vector) {
 			if (relative === true)
@@ -54,8 +55,8 @@ var Node = exports.Node = {
 
 
 
-	// Getter Setter: If an `angle` is given, change this `Node`'s rotation and call `_u()` to recompute the absolute values. Otherwise return the current rotation.
-	// If `relative` is `true`, add `angle` to the current rotation. Otherwise, set the rotation to `angle`.
+	// Getter Setter: If an `angle` is given, change this node's rotation and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current rotation.
+	// If `relative` is `true`, *add* `angle` to the current rotation. Otherwise, *set* the rotation to `angle`.
 	rotation: function (angle, relative) {
 		if (angle !== null) {
 			if (relative === true)
@@ -70,8 +71,8 @@ var Node = exports.Node = {
 
 
 
-	// Recompute the node's absolute values and store them in `_aP` and `_aR`, then call `_u()` on all children.
-	// Important: This node's rotation is applied *after* the position, so it won't affect this node's position, but that of its children.
+	// Recompute the node's absolute values (`_aP` and `_aR`), then call `_u()` on all children.
+	// Important: A node's rotation is applied *after* applying its position, so it will only affect the position of its children.
 	_u: function () {
 		var thus = this;   // just a proxy
 

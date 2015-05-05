@@ -64,8 +64,8 @@ If you contribute code, pleace respect [the coding style of this project](.edito
 
 
 
-## API Documentation
+## Documentation
 
-- [core](docs/core.md)
-- [shapes](docs/shapes.md)
-- [util](docs/util.md)
+- [Introduction to *velo*](docs/intro.md)
+- [*velo* styleguide](docs/styleguide.md)
+- [*velo* API documentation](docs/api.md)

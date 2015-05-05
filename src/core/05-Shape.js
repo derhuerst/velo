@@ -32,11 +32,3 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 
 });
-
-
-
-// Export a shorthand.
-var c = exports.c = function (element) {
-	return inherit(Canvas)
-	.init(element);
-};

@@ -1,4 +1,4 @@
-// `helpers` contains a collection of internal helper functions.
+// `helpers` contains a collection of helper functions. They are used internally but get `export`ed as well.
 
 
 
@@ -13,8 +13,12 @@ var noop = exports.noop = function () {};
 
 
 
-// Just proxies for shorter code.
+// Proxy for `Object.create`. Create a new inherited object from another object. See https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/create and http://davidwalsh.name/javascript-objects-deconstruction#simpler-object-object for more.
 var inherit = exports.inherit = Object.create;
+
+
+
+// Proxy for `Math.round`.
 var round = Math.round;
 
 
@@ -31,7 +35,7 @@ var extend = function (target, source) {
 
 
 
-// `Array` helpers
+// `Array` helpers.
 var array = exports.array = {
 
 	// Add `item` to the array `arr` if it isn't stored yet.

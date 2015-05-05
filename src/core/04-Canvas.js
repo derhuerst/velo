@@ -2,14 +2,14 @@
 var Canvas = exports.Canvas = extend(inherit(Node), {
 
 
-
+	// Create a new `Vancas` using `element`. `element` must be a DOM node (`HTMLCanvasElement`).
 	init: function (element) {
 		Node.init.call(this);
 
-		// A user might want to access the `_rn` property, even if this is the root node.
+		// A user might want to use the `_rn` property, even if a `Canvas` is the root node of the scene graph. See `Node._rn`.
 		this._rn = this;
 
-		// The canvas DOM node (`HTMLCanvasElement`).
+		// The DOM node (`HTMLCanvasElement`).
 		if (!element)
 			throw new Error('No HTMLCanvasElement given.');
 		this.element = element;
