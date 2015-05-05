@@ -10,12 +10,11 @@
 
 ## `shapes`
 
-- [`shapes/Spot`](shapes/01-Spot.md)
-- [`shapes/Polygon`](shapes/02-Polygon.md)
-- [`shapes/Rectangle`](shapes/03-Rectangle.md)
-- [`shapes/Ellipse`](shapes/04-Ellipse.md)
-- [`shapes/Square`](shapes/05-Square.md)
-- [`shapes/Circle`](shapes/06-Circle.md)
+- [`shapes/Polygon`](shapes/01-Polygon.md)
+- [`shapes/Rectangle`](shapes/02-Rectangle.md)
+- [`shapes/Ellipse`](shapes/03-Ellipse.md)
+- [`shapes/Square`](shapes/04-Square.md)
+- [`shapes/Circle`](shapes/05-Circle.md)
 
 ## `util`
 
