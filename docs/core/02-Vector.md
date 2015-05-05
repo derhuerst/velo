@@ -7,14 +7,14 @@
 ## Usage
 
 ```javascript
-var v1 = velo.v(5, 0);   // x: 5, y: 0
-var v2 = velo.v(5, 5);   // x: 5, y: 5
+var vector1 = velo.v(5, 0);   // x: 5, y: 0
+var vector2 = velo.v(5, 5);   // x: 5, y: 5
 
-v1.rotate(Math.PI/2);   // x: 0, y: 5
-v2.add(v1);   // x: 5, y: 10
+vector1.rotate(Math.PI/2);   // x: 0, y: 5
+vector2.add(vector1);   // x: 5, y: 10
 
-v1.equals(v2);   // false
-v2.equals(v2.clone());   // true
+vector1.equals(vector2);   // false
+vector2.equals(vector2.clone());   // true
 ```
 
 

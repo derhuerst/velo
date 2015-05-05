@@ -6,24 +6,30 @@
 
 ## Usage
 
+In opposition to classes inheriting from it, `Node` is not supposed to be used directly.
+
 ```javascript
 // create two nested nodes
-n1 = velo.n({
+node1 = velo.n({
 	position: velo.v(10, 10),
 	rotation: 0.3
 });
-n2 = velo.n({
-	parent: n1,
+node2 = velo.n({
 	position: velo.v(5, 5),
 	rotation: 0.4
 });
-n1.children.push(n2);
 
-n2.position;   // { x: 5, y: 5 }
-n2._aP;   // { x: 15, y: 15 }
+node2.position;   // { x: 5, y: 5 }
+node2.rotation;   // 0.4
 
-n2.rotation;   // 0.4
-n2._aR;   // { 0.7 }
+node2._aP;   // { x: 5, y: 5 }
+node2._aR;   // 0.4
+
+velo.array.add(node1.children, node2);
+node2.parent(node1);
+
+node2._aP;   // { x: 15, y: 15 }
+node2._aR;   // { 0.7 }
 ```
 
 

@@ -9,12 +9,11 @@
 ## Usage
 
 ```javascript
-var domElement = document.getElementById('myCanvas');   // select an `HTMLCanvasElement`
-var myCanvas = velo.c(domElement);   // set up a new `Canvas`
+var canvas = velo.c(domElement);
 
 // add stuff here…
 
-myCanvas.draw();
+canvas.draw();
 ```
 
 

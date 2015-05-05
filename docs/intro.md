@@ -15,28 +15,28 @@ Whenever the user changes a `Node` object's `parent`, `position` or `rotation`, 
 
 *velo* sacrifices *automatic* scene graph management in favor of a smaller footprint. **You have to manage the scene graph *manually*.** **If you don't keep the scene graph consistent, kittens will die!** An inconsistent scene graph may lead to invisible or offset nodes. Also, take care that a node never is a child of *two* nodes.
 
-To give you an example, let's say you have two nodes `n1` and `n2`. When you *add* `n2` to `n1`'s list of children, don't forget to set `n2`'s parent *to `n1`*, either on setup (method `a`) or later (method `b`).
+To give you an example, let's say you have two nodes `node1` and `node2`. When you *add* `node2` to `node1`'s list of children, don't forget to set `node2`'s parent *to `node1`*, either on setup (method `a`) or later (method `b`).
 
 ```javascript
-velo.array.add(n1.children, n2);   // adds `n2` to `n1.children`
+velo.array.add(node1.children, node2);
 
 // Method `a` – specify the parent on setup
-n2 = velo.n({
+node2 = velo.n({
 	…
-	parent: n1
+	parent: node1
 	…
 });
 
 // Method `b` – specify the parent later
-n2.parent(n1);
+node2.parent(node1);
 ```
 
-When you *remove* `n2` from `n1`'s list of children, don't forget to set `n2`'s parent *to `null`*.
+When you *remove* `node2` from `node1`'s list of children, don't forget to set `node2`'s parent *to `null`*.
 
 ```javascript
-velo.array.remove(n1.children, n2);   // removes `n2` from `n1.children`
+velo.array.remove(node1.children, node2);
 
-n2.parent(null);   // This is important!
+node2.parent(null);   // This is important!
 ```
 
 
