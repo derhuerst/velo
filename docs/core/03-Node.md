@@ -42,7 +42,7 @@ node2 = velo.n({…});   // shorthand
 Create a new `Node` based on `options`. `options` may contain the following keys.
 
 | Key | Default | Description |
-| - | - | - |
+| --- | ------- | ----------- |
 | [`parent`](#private-_pn) | `null` | The parent `Node` object. |
 | [`position`](#private-_p) | `velo.v()` | The position as a [`Vector`](02-vector.md) object (relative to the node's parent). |
 | [`rotation`](#private-_r) | `0` | The rotation in [radians](http://en.wikipedia.org/wiki/Radian) (relative to the node's parent). |

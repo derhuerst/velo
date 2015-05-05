@@ -23,7 +23,7 @@ In opposition to classes inheriting from it, `Shape` is not supposed to be used 
 Create a new `Shape` based on `options`. `options` may contain the following keys.
 
 | Key | Default | Description |
-| - | - | - |
+| --- | ------- | ----------- |
 | [`fillColor`](#public-fillcolor) | `'gray'` | The color the shape will be filled with. |
 | [`strokeColor`](#public-strokecolor) | `'black'` | The color the shape's border will be drawn with. |
 | [`lineWidth`](#public-linewidth) | `1` | The width of shape's the border. |
