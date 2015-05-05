@@ -28,7 +28,7 @@ npm install --dev
 
 |Module|Default|Files|
 |:--:|:--:|:--|
-|[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/04-Node.js), [`Canvas`](src/core/05-Canvas.js), [`Shape`](src/core/06-Shape.js)|
+|[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/03-Node.js), [`Canvas`](src/core/04-Canvas.js), [`Shape`](src/core/05-Shape.js)|
 |[shapes](src/shapes)|✔|[`Spot`](src/shapes/01-Spot.js), [`Polygon`](src/shapes/02-Polygon.js), [`Rectangle`](src/shapes/03-Rectangle.js), [`Ellipse`](src/shapes/04-Ellipse.js), [`Square`](src/shapes/05-Square.js), [`Circle`](src/shapes/06-Circle.js)|
 |[util](src/util)|✔|[`RenderingInterval`](src/util/01-RenderingInterval.js), [`Interval`](src/util/02-Interval.js)|
 
@@ -60,12 +60,12 @@ npm run dist
 
 If you **have a question**, **found a bug** or want to **propose a feature**, have a look at [the issues page](https://github.com/derhuerst/velo/issues).
 
-If you contribute code, pleace respect [the coding style of this project](.editorconfig).
+If you contribute code, pleace respect [the coding style of this project](docs/styleguide.md).
 
 
 
 ## Documentation
 
 - [Introduction to *velo*](docs/intro.md)
-- [*velo* styleguide](docs/styleguide.md)
 - [*velo* API documentation](docs/api.md)
+- [*velo* styleguide](docs/styleguide.md)
