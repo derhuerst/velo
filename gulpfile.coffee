@@ -30,7 +30,7 @@ cfg = pkg.config
 
 gulp.task 'concat', () ->
 	globs = []
-	for glob in cfg.globs or ['core/*', 'shapes/*', 'util/*']
+	for glob in cfg.files or ['core/*', 'shapes/*', 'util/*']
 		gutil.log 'using module', gutil.colors.green glob
 		globs.push path.join 'src', "#{glob}.js"
 

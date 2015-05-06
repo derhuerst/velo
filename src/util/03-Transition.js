@@ -27,6 +27,7 @@ var Transition = exports.Transition = {
 		// — http://stackoverflow.com/a/8317722
 		thus._e = options.easing || easing['default'];
 		// The time of the transition's beginning. Can be used to delay a transition by passing a number bigger than `Date.now()`.
+		// todo: add an optional `options.delay`
 		thus._s = options.start || Date.now();
 	},
 
@@ -61,13 +62,10 @@ var a = exports.a = function (node, properties, options) {
 
 
 
-// `velo.fx` is supposed to be a global collection of transitions.
-var fx = exports.fx = [];
-
-// `velo.fx.easing` holds all easing functions available in *velo*. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
+// `velo.easing` holds all easing functions available in *velo*. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
 // > An easing function is usually a function that describes the value of a property given a percentage of completeness.
 // — http://stackoverflow.com/a/8317722
-var easing = fx.easing = {};
+var easing = exports.easing = {};
 
 
 

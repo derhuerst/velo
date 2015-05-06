@@ -6,6 +6,7 @@
 - node compatibility
 - consider `Object.make` https://gist.github.com/getify/5226305
 - more flexible easing functions?
+- looping transitions
 
 ## unit tests
 
