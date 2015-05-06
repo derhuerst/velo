@@ -29,6 +29,8 @@ var Transition = exports.Transition = {
 		// The time of the transition's beginning. Can be used to delay a transition by passing a number bigger than `Date.now()`.
 		// todo: add an optional `options.delay`
 		thus._s = options.start || Date.now();
+
+		return thus;   // method chaining
 	},
 
 
@@ -46,6 +48,8 @@ var Transition = exports.Transition = {
 			// originalProperty + propertyDelta * easing( elapsed / duration )
 			thus._n[property] = thus._oP[property] + thus._p[property] * factor;
 		}
+
+		return thus;   // method chaining
 	}
 
 
