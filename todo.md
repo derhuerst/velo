@@ -5,6 +5,7 @@
 - util/fx
 - node compatibility
 - consider `Object.make` https://gist.github.com/getify/5226305
+- more flexible easing functions?
 
 ## unit tests
 

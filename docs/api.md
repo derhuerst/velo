@@ -20,3 +20,11 @@
 
 - [`util/RenderingInterval`](util/01-RenderingInterval.md)
 - [`util/Interval`](util/02-Interval.md)
+- [`util/Transition`](util/03-Transition.md)
+
+## `easing`
+
+- [`easing/easeIn`](easing/01-easeIn.md)
+- [`easing/easeOut`](easing/02-easeOut.md)
+- [`easing/easeInOut`](easing/03-easeInOut.md)
+- [`easing/swing`](easing/04-swing.md)

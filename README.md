@@ -30,14 +30,15 @@ npm install --dev
 |:--:|:--:|:--|
 |[core](src/core)|✔|[`helpers`](src/core/01-helpers.js), [`Vector`](src/core/02-Vector.js), [`Node`](src/core/03-Node.js), [`Canvas`](src/core/04-Canvas.js), [`Shape`](src/core/05-Shape.js)|
 |[shapes](src/shapes)|✔|[`Polygon`](src/shapes/01-Polygon.js), [`Rectangle`](src/shapes/02-Rectangle.js), [`Ellipse`](src/shapes/03-Ellipse.js), [`Square`](src/shapes/04-Square.js), [`Circle`](src/shapes/05-Circle.js)|
-|[util](src/util)|✔|[`RenderingInterval`](src/util/01-RenderingInterval.js), [`Interval`](src/util/02-Interval.js)|
+|[util](src/util)|✔|[`RenderingInterval`](src/util/01-RenderingInterval.js), [`Interval`](src/util/02-Interval.js), [`Transition`](src/util/03-Transition.js)|
+|[easing](src/easing)||[`easeIn`](src/easing/01-easeIn.js), [`easeOut`](src/easing/02-easeOut.js), [`easeInOut`](src/easing/03-easeInOut.js), [`swing`](src/easing/04-swing.js)|
 
 **Specify the modules** you want to include **in `package.json`**, using the [glob syntax](https://github.com/isaacs/node-glob#glob-primer).
 
 ```json
 …
 	"config": {
-		"modules": [
+		"files": [
 			"core/*",
 			"util/*",
 			"shapes/*"
