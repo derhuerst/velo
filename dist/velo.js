@@ -224,7 +224,7 @@ var Node = exports.Node = {
 	// Getter Setter: If an `angle` is given, change this node's rotation and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current rotation.
 	// If `relative` is `true`, *add* `angle` to the current rotation. Otherwise, *set* the rotation to `angle`.
 	rotation: function (angle, relative) {
-		if (angle !== null) {
+		if (angle || angle === 0) {
 			if (relative === true)
 				this._r += angle;
 			else
@@ -232,7 +232,7 @@ var Node = exports.Node = {
 			this._u();   // recompute the the absolute position
 			return this;   // method chaining
 		} else
-			return this._p;
+			return this._r;
 	},
 
 
@@ -330,7 +330,7 @@ var Shape = exports.Shape = extend(inherit(Node), {
 		// The color the shape will be bordered with. Can be any valid CSS color. Default is `black`.
 		thus.strokeColor = options.strokeColor || 'black';
 		// The width of the border. Default is `0`.
-		thus.lineWidth = options.lineWidth !== null ? options.lineWidth : 0;
+		thus.lineWidth = (options.lineWidth === 0) ? 0 : options.lineWidth || 0;
 
 		return thus;   // method chaining
 	},
@@ -457,7 +457,10 @@ var Transition = exports.Transition = {
 		// }
 		thus._p = properties;
 		// Because the `node`'s properties change during the transition, the original values have to be copied.
-		thus._oP = extend({}, properties);
+		thus._oP = {};
+		for (property in thus._p) {
+			thus._oP[property] = thus._n[property];
+		}
 
 		options = options || {};
 		// The duration of the transition in milliseconds.
@@ -467,7 +470,10 @@ var Transition = exports.Transition = {
 		// — http://stackoverflow.com/a/8317722
 		thus._e = options.easing || easing['default'];
 		// The time of the transition's beginning. Can be used to delay a transition by passing a number bigger than `Date.now()`.
+		// todo: add an optional `options.delay`
 		thus._s = options.start || Date.now();
+
+		return thus;   // method chaining
 	},
 
 
@@ -477,14 +483,30 @@ var Transition = exports.Transition = {
 
 		var elapsed = Date.now() - thus._s;
 		// abort if the animation hasn't begun or is already finished.
-		if (elapsed < 0 || elapsed > thus._d) return;
+		if (elapsed < 0) return;
+		if (elapsed > thus._d) this.finish();
 		var factor = thus._e(elapsed / thus._d);
 
-		var property, target;
-		for (property in thus._p) {
+		for (var property in thus._p) {
 			// originalProperty + propertyDelta * easing( elapsed / duration )
+			// todo: what to do with getter/setter?
 			thus._n[property] = thus._oP[property] + thus._p[property] * factor;
 		}
+
+		return thus;   // method chaining
+	},
+
+
+
+	finish: function () {
+		var thus = this;   // proxy
+
+		for (var property in thus._p) {
+			// todo: what to do with getter/setter?
+			thus._n[property] = thus._oP[property] + thus._p[property];
+		}
+
+		return thus;   // method chaining
 	}
 
 
@@ -501,13 +523,10 @@ var a = exports.a = function (node, properties, options) {
 
 
 
-// `velo.fx` is supposed to be a global collection of transitions.
-var fx = exports.fx = [];
-
-// `velo.fx.easing` holds all easing functions available in *velo*. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
+// `velo.easing` holds all easing functions available in *velo*. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
 // > An easing function is usually a function that describes the value of a property given a percentage of completeness.
 // — http://stackoverflow.com/a/8317722
-var easing = fx.easing = {};
+var easing = exports.easing = {};
 
 
 

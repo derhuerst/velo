@@ -14,7 +14,7 @@ var Shape = exports.Shape = extend(inherit(Node), {
 		// The color the shape will be bordered with. Can be any valid CSS color. Default is `black`.
 		thus.strokeColor = options.strokeColor || 'black';
 		// The width of the border. Default is `0`.
-		thus.lineWidth = options.lineWidth !== null ? options.lineWidth : 0;
+		thus.lineWidth = (options.lineWidth === 0) ? 0 : options.lineWidth || 0;
 
 		return thus;   // method chaining
 	},

@@ -58,7 +58,7 @@ var Node = exports.Node = {
 	// Getter Setter: If an `angle` is given, change this node's rotation and call `_u()` to recompute the absolute values (`_aP` and `_aR`). Otherwise return the current rotation.
 	// If `relative` is `true`, *add* `angle` to the current rotation. Otherwise, *set* the rotation to `angle`.
 	rotation: function (angle, relative) {
-		if (angle !== null) {
+		if (angle || angle === 0) {
 			if (relative === true)
 				this._r += angle;
 			else
@@ -66,7 +66,7 @@ var Node = exports.Node = {
 			this._u();   // recompute the the absolute position
 			return this;   // method chaining
 		} else
-			return this._p;
+			return this._r;
 	},
 
 
