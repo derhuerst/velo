@@ -1,8 +1,9 @@
+// A `Transition` changes a `Node`'s properties over a given duration by a given value.
 var Transition = exports.Transition = {
 
 
 
-	// set up the `Transition` of a `node`'s properties
+	// Set up the `Transition` of a `node`'s `properties`.
 	init: function (node, properties, options) {
 		var thus = this;   // proxy
 
@@ -12,7 +13,7 @@ var Transition = exports.Transition = {
 		// The node the properties get changed of.
 		thus._n = node;
 
-		// An object with the properties to animate. The values are *relative* to the ´node´s original properties.
+		// An object with the properties to animate. The values are *relative* (get added) to the `node`s original properties.
 		// Example:
 		// {
 		//    rotation: Math.PI/2
@@ -21,12 +22,7 @@ var Transition = exports.Transition = {
 		thus._p = properties;
 		// Because the `node`'s properties change during the transition, the original values have to be copied.
 		thus._oP = {};
-		// For each of the properties to animate, store if they are set by getter/setter functions.
-		// Example:
-		// {
-		//    rotation: true
-		//    radius: false
-		// }
+		// For each of the properties to animate, `_f` stores if they are set by getter/setter functions.
 		thus._f = {};
 		for (var property in thus._p) {
 			if (typeof thus._n[property] === 'function'){
@@ -41,11 +37,11 @@ var Transition = exports.Transition = {
 		options = options || {};
 		// The duration of the transition in milliseconds.
 		thus._d = options.duration || 1000;
-		// The easing function to be used.
+		// *A reference* to the easing function to be used.
 		// > Easing functions specify the rate of change of a parameter over time.
 		// — http://easings.net/en
 		thus._e = options.easing || easing['linear'];
-		// The time of the transition's beginning. Can be used to delay a transition by passing a number bigger than `Date.now()`.
+		// The JavaScript timestamp (https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Date/now) the transition will start. Can be used to delay a transition by passing a number bigger than `Date.now()`.
 		// todo: add an optional `options.delay`
 		thus._s = options.start || Date.now();
 
@@ -54,6 +50,7 @@ var Transition = exports.Transition = {
 
 
 
+	// Update the `properties` according to the current progress of the transition, which is influenced by the easing function. Call `finish()` in the end.
 	update: function () {
 		var thus = this;   // proxy
 
@@ -74,7 +71,7 @@ var Transition = exports.Transition = {
 
 
 
-	// todo.
+	// Finish the transition, setting the `node`'s `properties` to their final values and `finished` to `true`.
 	finish: function () {
 		this._a(1);
 		this.finished = true;
@@ -84,7 +81,7 @@ var Transition = exports.Transition = {
 
 
 
-	// Apply `factor` to the transition of all properties.
+	// Apply `factor` to the transition of all `properties.
 	_a: function (factor) {
 		var thus = this,   // proxy
 		property;
@@ -106,14 +103,14 @@ var Transition = exports.Transition = {
 
 
 // Export a shorthand.
-var a = exports.a = function (node, properties, options) {
+var t = exports.t = function (node, properties, options) {
 	return inherit(Transition)
 	.init(node, properties, options);
 };
 
 
 
-// `velo.easing` holds all easing functions available in *velo*. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
+// `velo.easing` holds all easing functions *velo* has been built with. They all have the same signature (http://en.m.wikipedia.org/wiki/Type_signature#Signature).
 // > Easing functions specify the rate of change of a parameter over time.
 // — http://easings.net/en
 var easing = exports.easing = {};
