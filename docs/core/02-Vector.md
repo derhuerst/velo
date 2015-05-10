@@ -22,8 +22,8 @@ vector2.equals(vector2.clone());   // true
 ## Shorthand `v`
 
 ```javascript
-vector1 = velo.inherit(velo.Vector).init(5, 0);   // complicated way
-vector2 = velo.v(5, 0);   // shorthand
+velo.inherit(velo.Vector).init(5, 0);   // complicated way
+velo.v(5, 0);   // shorthand
 ```
 
 

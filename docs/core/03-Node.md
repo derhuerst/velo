@@ -37,8 +37,8 @@ node2._aR;   // { 0.7 }
 ## Shorthand `n`
 
 ```javascript
-node1 = velo.inherit(velo.Node).init({…});   // complicated way
-node2 = velo.n({…});   // shorthand
+velo.inherit(velo.Node).init({…});   // complicated way
+velo.n({…});   // shorthand
 ```
 
 
