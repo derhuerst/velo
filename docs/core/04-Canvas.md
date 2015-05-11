@@ -21,8 +21,8 @@ canvas.draw();
 ## Shorthand `c`
 
 ```javascript
-velo.inherit(velo.Canvas).init({…});   // complicated way
-velo.c({…});   // shorthand
+velo.inherit(velo.Canvas).init(…);   // complicated way
+velo.c(…);   // shorthand
 ```
 
 
