@@ -5,16 +5,24 @@ var RenderingInterval = exports.RenderingInterval = {
 
 	init: function (callback) {
 		this.callback = callback || noop;
-		this.running = false;
+		this._r = false;
 
 		return this;   // method chaining
 	},
 
 
 
+	running: function () {
+		return this._r;
+	},
+
+
+
 	start: function () {
-		this.running = true;
-		this._queue();
+		if(!this._r){
+			this._r = true;
+			this._q();
+		}
 
 		return this;   // method chaining
 	},
@@ -22,22 +30,24 @@ var RenderingInterval = exports.RenderingInterval = {
 
 
 	stop: function () {
-		this.running = false;
+		this._r = false;
 
 		return this;   // method chaining
 	},
 
 
 
-	_call: function () {
-		if(!this.running) return;
-		this.callback();
-		this._queue();
+	_c: function () {
+		if(this._r){
+			this.callback();
+			this._q();
+		}
 	},
 
 
-	_queue: function () {
-		requestAnimationFrame(this._call.bind(this));
+
+	_q: function () {
+		requestAnimationFrame(this._c.bind(this));
 	}
 
 

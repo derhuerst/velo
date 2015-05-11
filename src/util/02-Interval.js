@@ -11,8 +11,8 @@ var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 
 
-	_queue: function () {
-		setTimeout(this._call.bind(this), this.interval);
+	_q: function () {
+		setTimeout(this._c.bind(this), this.interval);
 	}
 
 
