@@ -4,10 +4,21 @@
 	"main": "dist/velo.min.js",
 	"license": "MIT",
 	"ignore": [
-		"package.json",
-		".editorconfig",
 		".DS_Store",
-		"gulpfile.coffee"
+		"Thumbs.db",
+		".nvm-version",
+		"node_modules",
+		"npm-debug.log",
+		"src/",
+		"docs/",
+		".editorconfig",
+		".gitignore",
+		".npmignore",
+		".travis.yml",
+		"gulpfile.coffee",
+		"todo.md",
+		"velo.sublime-project",
+		"velo.sublime-workspace"
 	],
 	"keywords": [
 		"velo",
