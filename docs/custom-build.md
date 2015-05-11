@@ -50,9 +50,9 @@ npm install --dev
 …
 	"config": {
 		"files": [
-			"core/*",
-			"util/*",
-			"shapes/*"
+			"core/*.js",
+			"util/*.js",
+			"shapes/*.js"
 		]
 	}
 …
