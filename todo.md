@@ -37,3 +37,9 @@
 - plugins
 	- subrepos
 	- add `git submodules …` to build scripts etc
+- README.md: shield.io
+	- ![latest release](https://img.shields.io/github/release/derhuerst/velo.svg)
+	- ![npm version](https://img.shields.io/npm/v/velo.svg)
+	- ![node version](https://img.shields.io/node/v/velo.svg)
+	- ![bower version](https://img.shields.io/bower/v/velo.svg)
+	- ![codeclimate coverage](https://img.shields.io/codeclimate/coverage/github/derhuerst/velo.svg)

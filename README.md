@@ -1,6 +1,7 @@
 # velo – a lightweight canvas 2D library
 
-[![Build Status](https://travis-ci.org/derhuerst/velo.svg?branch=master)](https://travis-ci.org/derhuerst/velo)
+[![build status](https://img.shields.io/travis/derhuerst/velo.svg)](https://travis-ci.org/derhuerst/velo)
+[![dev dependency status](https://img.shields.io/david/dev/derhuerst/velo.svg)](https://david-dm.org/derhuerst/velo#info=devDependencies)
 
 ***velo* is a modern and lightweight canvas 2D library** written in vanilla JavaScript. It offers a simple and straightforward API and embraces [prototypal programming](http://davidwalsh.name/javascript-objects-deconstruction#simpler-object-object), keeping it **below 7kb (minified)**. *velo* is licensed under the **[MIT license](LICENSE)**.
 
