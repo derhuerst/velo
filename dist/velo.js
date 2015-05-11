@@ -351,46 +351,64 @@ var Shape = exports.Shape = extend(inherit(Node), {
 
 
 
-// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
+// `RenderingInterval` is a special interval used for rendering. It leverages the browser's `requestAnimationFrame` (https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) to be FPS- and battery-friendly.
 var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Initialize a new `RenderingInterval` that calls `callback` when `running()`.
 	init: function (callback) {
+		// A reference to the callback to be called regularly.
 		this.callback = callback || noop;
-		this.running = false;
+		// If the interval is running.
+		this._r = false;
 
 		return this;   // method chaining
 	},
 
 
 
+	// Return if the interval is running.
+	running: function () {
+		return this._r;
+	},
+
+
+
+	// Start the interval, calling `_q()` and setting `_r` to `true`.
 	start: function () {
-		this.running = true;
-		this._queue();
+		if(!this._r){
+			this._r = true;
+			this._q();
+		}
 
 		return this;   // method chaining
 	},
 
 
 
+	// Stop the interval, setting `_r` to `false`.
 	stop: function () {
-		this.running = false;
+		this._r = false;
 
 		return this;   // method chaining
 	},
 
 
 
-	_call: function () {
-		if(!this.running) return;
-		this.callback();
-		this._queue();
+	// Call the actual `callback`.
+	_c: function () {
+		if(this._r){
+			this.callback();
+			this._q();
+		}
 	},
 
 
-	_queue: function () {
-		requestAnimationFrame(this._call.bind(this));
+
+	// Request the next call to `callback` using `requestAnimationFrame`.
+	_q: function () {
+		requestAnimationFrame(this._c.bind(this));
 	}
 
 
@@ -407,21 +425,24 @@ var ri = exports.ri = function (callback) {
 
 
 
-// A helper for calling `callback` every `interval` milliseconds.
+// `Interval` is a helper for calling `callback` every `interval` milliseconds.
 var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 
 
+	// Set up an `Interval` that calls `callback` every `interval` milliseconds when `running()`.
 	init: function (callback, interval) {
 		RenderingInterval.init.call(this, callback);
 
+		// The time between the calls of `callback` in milliseconds.
 		this.interval = interval;
 	},
 
 
 
-	_queue: function () {
-		setTimeout(this._call.bind(this), this.interval);
+	// Request the next call to `callback` using `setTimeout`.
+	_q: function () {
+		setTimeout(this._c.bind(this), this.interval);
 	}
 
 
