@@ -1,7 +1,16 @@
-.editorconfig
 .DS_Store
-.bower.json
+Thumbs.db
 
+.nvm-version
+node_modules
+npm-debug.log
+
+src/
+docs/
+.editorconfig
+.gitignore
+bower.json
 gulpfile.coffee
-
-/node_modules
+todo.md
+velo.sublime-project
+velo.sublime-workspace

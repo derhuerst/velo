@@ -2,8 +2,7 @@
 
 ## code
 
-- util/fx
-- node compatibility
+- node.js compatibility
 - consider `Object.make` https://gist.github.com/getify/5226305
 - more flexible easing functions?
 - looping transitions
@@ -17,9 +16,10 @@
 
 - shapes
 - util
+- easing
 - unit tests?
 - consistent usage of "module", "file", "component", "class"
-- "class" -> "set" or "class" -> "blueprint"?
+	- "class" -> "set" or "class" -> "blueprint"?
 - branch workflow?
 - write a roadmap?
 
@@ -34,3 +34,6 @@
 ## miscellaneous
 
 - use releases!!
+- plugins
+	- subrepos
+	- add `git submodules …` to build scripts etc

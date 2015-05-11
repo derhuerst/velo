@@ -23,7 +23,13 @@
 		"type": "git",
 		"url": "git://github.com/derhuerst/velo.git"
 	},
-	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/derhuerst/velo/issues"
+	},
+	"licenses": {
+		"type": "MIT",
+		"url": "http://github.com/derhuerst/velo/raw/master/LICENSE"
+	},
 	"devDependencies": {
 		"coffee-script":		"^1.9.2",
 		"browserify":			"^10.0.0",
