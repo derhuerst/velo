@@ -1,10 +1,13 @@
-// A special interval used for rendering. It leverages the browser's `requestAnimationFrame` to be FPS- and battery-friendly.
+// `RenderingInterval` is a special interval used for rendering. It leverages the browser's `requestAnimationFrame` (https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) to be FPS- and battery-friendly.
 var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Initialize a new `RenderingInterval` that calls `callback` when `running()`.
 	init: function (callback) {
+		// A reference to the callback to be called regularly.
 		this.callback = callback || noop;
+		// If the interval is running.
 		this._r = false;
 
 		return this;   // method chaining
@@ -12,12 +15,14 @@ var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Return if the interval is running.
 	running: function () {
 		return this._r;
 	},
 
 
 
+	// Start the interval, calling `_q()` and setting `_r` to `true`.
 	start: function () {
 		if(!this._r){
 			this._r = true;
@@ -29,6 +34,7 @@ var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Stop the interval, setting `_r` to `false`.
 	stop: function () {
 		this._r = false;
 
@@ -37,6 +43,7 @@ var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Call the actual `callback`.
 	_c: function () {
 		if(this._r){
 			this.callback();
@@ -46,6 +53,7 @@ var RenderingInterval = exports.RenderingInterval = {
 
 
 
+	// Request the next call to `callback` using `requestAnimationFrame`.
 	_q: function () {
 		requestAnimationFrame(this._c.bind(this));
 	}

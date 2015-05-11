@@ -15,7 +15,6 @@
 ## documentation
 
 - shapes
-- util
 - unit tests?
 - consistent usage of "module", "file", "component", "class"
 	- "class" -> "set" or "class" -> "blueprint"?
