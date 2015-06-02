@@ -1,5 +1,7 @@
 # velo – a lightweight canvas 2D library
 
+[![npm version](https://img.shields.io/npm/v/velo.svg)](https://www.npmjs.com/package/velo)
+[![bower version](https://img.shields.io/bower/v/velo.svg)](bower.json)
 [![build status](https://img.shields.io/travis/derhuerst/velo.svg)](https://travis-ci.org/derhuerst/velo)
 [![dev dependency status](https://img.shields.io/david/dev/derhuerst/velo.svg)](https://david-dm.org/derhuerst/velo#info=devDependencies)
 
