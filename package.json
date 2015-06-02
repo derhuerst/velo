@@ -48,7 +48,8 @@
 	},
 	"scripts": {
 		"dist": "gulp",
-		"test": "return `true`"
+		"test": "return true",
+		"prepublish": "npm run dist && npm test"
 	},
 	"config": {
 		"files": [
