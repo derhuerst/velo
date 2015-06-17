@@ -4,6 +4,6 @@
 
 
 // Return a factor given a `progress` between `0` and `1`.
-easing.swing = function (progress){
+easing.swing = function (progress) {
 	return 0.5 - Math.cos(progress * Math.PI) / 2;
 };

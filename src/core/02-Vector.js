@@ -4,7 +4,7 @@ var Vector = exports.Vector = {
 
 
 	// Initialize the vector. `x` and `y` are `0` by default.
-	init: function (x, y){
+	init: function (x, y) {
 		this.x = x || 0;
 		this.y = y || 0;
 

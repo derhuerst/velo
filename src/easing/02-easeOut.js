@@ -4,6 +4,6 @@
 
 
 // Return a factor given a `progress` between `0` and `1`.
-easing.easeOut = function (progress){
+easing.easeOut = function (progress) {
 	return 1 - Math.pow(1 - progress, 2);
 };
