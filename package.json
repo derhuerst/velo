@@ -26,7 +26,7 @@
 	"bugs": {
 		"url": "https://github.com/derhuerst/velo/issues"
 	},
-	"licenses": {
+	"license": {
 		"type": "MIT",
 		"url": "http://github.com/derhuerst/velo/raw/master/LICENSE"
 	},

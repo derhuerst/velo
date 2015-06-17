@@ -12,6 +12,5 @@ docs/
 .travis.yml
 bower.json
 gulpfile.coffee
-todo.md
 velo.sublime-project
 velo.sublime-workspace
