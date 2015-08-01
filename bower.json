@@ -1,6 +1,5 @@
 {
 	"name": "velo",
-	"version": "0.2.0",
 	"main": "dist/velo.min.js",
 	"license": "MIT",
 	"ignore": [
