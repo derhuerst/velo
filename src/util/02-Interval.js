@@ -9,6 +9,8 @@ var Interval = exports.Interval = extend(inherit(RenderingInterval), {
 
 		// The time between the calls of `callback` in milliseconds.
 		this.interval = interval;
+
+		return this;   // method chaining
 	},
 
 
