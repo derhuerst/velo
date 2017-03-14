@@ -4,4 +4,4 @@ node_js:
   - stable
   - iojs
 script:
-  - npm run dist
+  - npm test

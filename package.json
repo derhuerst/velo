@@ -20,7 +20,7 @@
 	"bugs": "https://github.com/derhuerst/velo/issues",
 	"license": "ISC",
 	"scripts": {
-		"dist": "exit 0",
-		"prepublish": "npm run dist"
+		"test": "node -e 'require(\".\")'",
+		"prepublish": "npm test"
 	}
 }
