@@ -3,6 +3,10 @@
 	"description": "velo is a modern and lightweight canvas 2D library.",
 	"version": "0.3.0",
 	"main": "dist/velo.js",
+	"files": [
+		"dist",
+		"src"
+	],
 	"keywords": [
 		"velo",
 		"canvas",
@@ -13,19 +17,10 @@
 		"lightweight",
 		"javascript"
 	],
-	"author": {
-		"name": "Jannis R",
-		"email": "mail@jannisr.de",
-		"url": "http://jannisr.de"
-	},
+	"author": "Jannis R <mail@jannisr.de>",
 	"homepage": "https://github.com/derhuerst/velo",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/derhuerst/velo.git"
-	},
-	"bugs": {
-		"url": "https://github.com/derhuerst/velo/issues"
-	},
+	"repository": "derhuerst/velo",
+	"bugs": "https://github.com/derhuerst/velo/issues",
 	"license": "ISC",
 	"devDependencies": {
 		"coffee-script":		"^1.10.0",
@@ -45,8 +40,7 @@
 	},
 	"scripts": {
 		"dist": "gulp",
-		"test": "exit 0",
-		"prepublish": "npm run dist && npm test"
+		"prepublish": "npm run dist"
 	},
 	"config": {
 		"files": [

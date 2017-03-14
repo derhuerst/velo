@@ -1,14 +1,7 @@
-language: node_js
-
-node_js:
-  - "stable"
-  - "iojs"
-
-script:
-  - "npm run dist"
-  - "npm test"
-
-notifications:
-  email: false
-
 sudo: false
+language: node_js
+node_js:
+  - stable
+  - iojs
+script:
+  - npm run dist
