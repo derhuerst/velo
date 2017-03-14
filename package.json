@@ -1,7 +1,7 @@
 {
 	"name": "velo",
 	"description": "velo is a modern and lightweight canvas 2D library.",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"main": "index.js",
 	"files": ["index.js", "lib"],
 	"keywords": [
@@ -19,6 +19,7 @@
 	"repository": "derhuerst/velo",
 	"bugs": "https://github.com/derhuerst/velo/issues",
 	"license": "ISC",
+	"engines": {"node": ">=4"},
 	"scripts": {
 		"test": "node -e 'require(\".\")'",
 		"prepublish": "npm test"
